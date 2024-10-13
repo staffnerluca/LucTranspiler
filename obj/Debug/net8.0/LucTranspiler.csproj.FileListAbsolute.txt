@@ -1,0 +1,15 @@
+/home/staffnerluca/Dokumente/LucTranspiler/bin/Debug/net8.0/LucTranspiler
+/home/staffnerluca/Dokumente/LucTranspiler/bin/Debug/net8.0/LucTranspiler.deps.json
+/home/staffnerluca/Dokumente/LucTranspiler/bin/Debug/net8.0/LucTranspiler.runtimeconfig.json
+/home/staffnerluca/Dokumente/LucTranspiler/bin/Debug/net8.0/LucTranspiler.dll
+/home/staffnerluca/Dokumente/LucTranspiler/bin/Debug/net8.0/LucTranspiler.pdb
+/home/staffnerluca/Dokumente/LucTranspiler/obj/Debug/net8.0/LucTranspiler.GeneratedMSBuildEditorConfig.editorconfig
+/home/staffnerluca/Dokumente/LucTranspiler/obj/Debug/net8.0/LucTranspiler.AssemblyInfoInputs.cache
+/home/staffnerluca/Dokumente/LucTranspiler/obj/Debug/net8.0/LucTranspiler.AssemblyInfo.cs
+/home/staffnerluca/Dokumente/LucTranspiler/obj/Debug/net8.0/LucTranspiler.csproj.CoreCompileInputs.cache
+/home/staffnerluca/Dokumente/LucTranspiler/obj/Debug/net8.0/LucTranspiler.sourcelink.json
+/home/staffnerluca/Dokumente/LucTranspiler/obj/Debug/net8.0/LucTranspiler.dll
+/home/staffnerluca/Dokumente/LucTranspiler/obj/Debug/net8.0/refint/LucTranspiler.dll
+/home/staffnerluca/Dokumente/LucTranspiler/obj/Debug/net8.0/LucTranspiler.pdb
+/home/staffnerluca/Dokumente/LucTranspiler/obj/Debug/net8.0/LucTranspiler.genruntimeconfig.cache
+/home/staffnerluca/Dokumente/LucTranspiler/obj/Debug/net8.0/ref/LucTranspiler.dll

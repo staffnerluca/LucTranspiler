@@ -1,2 +1,93 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection.Metadata.Ecma335;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        string projectName = args[0];
+
+        if (args.Length > 0)
+        {
+            /*if (ExecuteProcess("dotnet", "--version").Equals("error"))
+            {
+                Console.WriteLine("dotnet is not installed on your system.");
+                return;
+            }
+            Console.WriteLine("dotnet is installed");
+            */
+            string output = "";
+            string parentDirectory = Path.Combine("..", projectName);
+            try
+            {
+                WriteCodeToProject(projectName, parentDirectory);
+            }
+            catch
+            {
+                Console.WriteLine("The project is not existing");
+                output = ExecuteProcess("dotnet", "new console -o " + parentDirectory);
+                WriteCodeToProject(projectName, parentDirectory);
+            }
+            
+            // Execute the generated project
+            output = ExecuteProcess("dotnet", "run --project " + parentDirectory);
+            Console.WriteLine("Output from dotnet run:");
+            Console.WriteLine(output);
+        }
+        else
+        {
+            Console.WriteLine("Error: No name of the project given.");
+        }
+    }
+
+    public static void WriteCodeToProject(string projectName, string parentDirectory)
+    {
+        string project = GenerateCSharpCode();
+        string programPath = Path.Combine(parentDirectory, "Program.cs");
+        File.WriteAllText(programPath, project);
+    }
+
+    public static string ExecuteProcess(string program, string arguments)
+    {
+        Process process = new Process();
+        process.StartInfo.FileName = program;
+        process.StartInfo.Arguments = arguments;
+        process.StartInfo.RedirectStandardOutput = true;
+        process.StartInfo.RedirectStandardError = true;
+        process.StartInfo.UseShellExecute = false;
+        process.StartInfo.CreateNoWindow = true;
+
+        process.Start();
+
+        string output = process.StandardOutput.ReadToEnd();
+        string error = process.StandardError.ReadToEnd();
+
+        process.WaitForExit();
+
+        if (!string.IsNullOrEmpty(output))
+        {
+            return output;
+        }
+        else if (!string.IsNullOrEmpty(error))
+        {
+            Console.WriteLine("Error: " + error);
+        }
+        return "error";
+    }
+
+    public static string GenerateCSharpCode()
+    {
+        return @"
+            using System;
+
+            class Program
+            {
+                static void Main(string[] args)
+                {
+                    Console.WriteLine(""Hello from the generated thing!"");
+                }
+            }";
+    }
+}
