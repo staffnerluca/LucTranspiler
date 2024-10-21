@@ -44,7 +44,8 @@ class Program
 
     public static void WriteCodeToProject(string projectName, string parentDirectory)
     {
-        string project = GenerateCSharpCode();
+        Transpiler trans = new Transpiler();
+        string project = trans.Transpile();
         string programPath = Path.Combine(parentDirectory, "Program.cs");
         File.WriteAllText(programPath, project);
     }
@@ -75,19 +76,5 @@ class Program
             Console.WriteLine("Error: " + error);
         }
         return "error";
-    }
-
-    public static string GenerateCSharpCode()
-    {
-        return @"
-            using System;
-
-            class Program
-            {
-                static void Main(string[] args)
-                {
-                    Console.WriteLine(""Hello from the generated thing!"");
-                }
-            }";
     }
 }
