@@ -22,6 +22,34 @@ public class TranspilerTests
         Assert.Equal(expected, actual);
     }
 
+
+    [Fact]
+    public void TranslateSimpleFunction_Test()
+    {
+        List<string> input = new List<string>(){
+            "function", "int", "test", "(", ")", "{", "}"
+        };
+        string expected = "public int test(){}";
+        Transpiler trans = new Transpiler(TestFilePath);
+        string output = trans.TranslateFunction(input);
+
+        Assert.Equal(expected, output); 
+    }
+
+        [Fact]
+    public void TranslateFunctionWithVarDecleration_Test()
+    {
+        List<string> input = new List<string>(){
+            "function", "int", "test", "(", ")", "{","int", "test", "=", "10", ";", "}"
+        };
+        string expected = "public int test(){int test=10;}";
+        Transpiler trans = new Transpiler(TestFilePath);
+        string output = trans.TranslateFunction(input);
+
+        Assert.Equal(expected, output); 
+    }
+
+
     [Fact]
     public void FindMainFunction_ShouldReturnCorrectKey()
     {

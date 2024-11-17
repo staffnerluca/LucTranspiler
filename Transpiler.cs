@@ -113,19 +113,19 @@ public class Transpiler
     // function format in sLUC: function [return_type] name([parameters])
     public string TranslateFunction(List<string> functionTokens)
     {
-        string func = "public";
-        functionTokens.RemoveAt(0); // removes function keyword
+        string func = "public ";
         func += TranslateToken(functionTokens[1]); // return value
         func += functionTokens[2]; // adds name of the function
-        func += "(";
+        func += functionTokens[3];
         bool endOfHead = false;
         int currentPos = 4;
-        while(!endOfHead)
+        while(!endOfHead && currentPos < functionTokens.Count)
         {
             if(functionTokens[currentPos].Equals(")"))
             {
-                func += "){";
+                func += ")";
                 endOfHead = true;
+                currentPos++;
                 break;
             }
             func += TranslateToken(functionTokens[currentPos]);
@@ -148,19 +148,19 @@ public class Transpiler
                     TranslateListCreation(functionTokens);
                 }
             }
+            func += token;
         }
 
-        func += "}";
         return func;
     }
 
     public string TranslateToken(string tok)
     {
         Dictionary<string, string> LucToCSharpToken = new Dictionary<string, string>{
-            {"string", "string"},
-            {"int", "int"},
-            {"bool", "bool"},
-            {"none", "void"},
+            {"string", "string "},
+            {"int", "int "},
+            {"bool", "bool "},
+            {"none", "void "},
             {":=", "="},
             {"+", "+"},
             {"-", "-"},
