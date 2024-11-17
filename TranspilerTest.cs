@@ -36,7 +36,7 @@ public class TranspilerTests
         Assert.Equal(expected, output); 
     }
 
-        [Fact]
+    [Fact]
     public void TranslateFunctionWithVarDecleration_Test()
     {
         List<string> input = new List<string>(){
@@ -49,6 +49,18 @@ public class TranspilerTests
         Assert.Equal(expected, output); 
     }
 
+    [Fact]
+    public void TranslateFunctionWithSimplifiedVarDecleration_Test()
+    {
+        List<string> input = new List<string>(){
+            "function", "int", "test", "(", ")", "{","test", ":=", "10", ";", "}"
+        };
+        string expected = "public int test(){var test=10;}";
+        Transpiler trans = new Transpiler(TestFilePath);
+        string output = trans.TranslateFunction(input);
+
+        Assert.Equal(expected, output); 
+    }
 
     [Fact]
     public void FindMainFunction_ShouldReturnCorrectKey()
@@ -68,5 +80,16 @@ public class TranspilerTests
         Assert.Equal(0, result);
     }
 
-    // Additional tests for other methods like TranslateFunction, TranslateToken, etc. can be added here.
+    [Fact]
+    public void TranslateVarDeclaration_Test()
+    {
+        List<string> input = new List<string>(){
+            "test", ":=", "10", ";"
+        };
+        string expected = "var test=10;";
+        Transpiler trans = new Transpiler(TestFilePath);
+        string output = trans.TranslateVarDefinition(input);
+
+        Assert.Equal(expected, output); 
+    }
 }

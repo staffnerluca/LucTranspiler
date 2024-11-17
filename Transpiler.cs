@@ -147,8 +147,20 @@ public class Transpiler
                 {
                     TranslateListCreation(functionTokens);
                 }
+                else if(functionTokens[i+1].Equals(":="))
+                {
+                    List<string> tokensForVar = functionTokens.GetRange(i-1, i+1);
+                    functionTokens.RemoveRange(i-1, i+1);
+                    func.Substring(0, func.LastIndexOf(' '));
+                    func += TranslateVarDefinition(tokensForVar);
+                    i++;
+                }
             }
-            func += token;
+            else
+            {
+                func += token;
+            }
+
         }
 
         return func;
@@ -161,17 +173,17 @@ public class Transpiler
             {"int", "int "},
             {"bool", "bool "},
             {"none", "void "},
-            {":=", "="},
             {"+", "+"},
             {"-", "-"},
             {"/", "/"},
             {"*", "*"},
             {";", ";"},
+            {"r", "return "}
 
         };
 
         List<string> complexKeywords = new List<string>{
-            "if", "?", "while"
+            "if", "?", "while", ":="
         };
         if(LucToCSharpToken.Keys.Contains(tok))
         {
@@ -196,7 +208,14 @@ public class Transpiler
         string translation = "var ";
         foreach(string token in tokens)
         {
-            translation += TranslateToken(token);
+            if(!token.Equals(":="))
+            {
+                translation += TranslateToken(token);
+            }
+            else
+            {
+                translation += "=";
+            }
         }
         return translation; 
     }
