@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text.Json;
 using Xunit;
 
@@ -91,5 +92,22 @@ public class TranspilerTests
         string output = trans.TranslateVarDefinition(input);
 
         Assert.Equal(expected, output); 
+    }
+
+    [Fact]
+    public void GetLineOfCurrentToken_Test()
+    {
+        List<string> input = new List<string>(){
+            "function", "int", "test", "(", ")", "{", "do_something_cool", "(", ")", ";", "int", "test", "=", "10", ";", "lorem", "ipsum", "=", "il", "dolor", ";", "}"
+        };
+        int inputIndex = 12;
+        Transpiler trans = new Transpiler(TestFilePath);
+        List<string> output = trans.GetLineOfToken(inputIndex, input);
+        List<string> expected = new List<string>(){
+            "int", "test", "=", "10", ";"
+        };
+
+        Assert.Equal(expected, output);
+
     }
 }

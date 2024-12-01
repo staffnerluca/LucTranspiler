@@ -16,6 +16,10 @@ public class Transpiler
         // need to adjust so that every seperator that is not " " is added to the tokens
     };
 
+    private List<string> lineEnders = new List<string>(){
+        "\n", "{", "}", ";"
+    };
+
     public Transpiler(string filePath)
     {
         filePath = this.filePath;
@@ -97,13 +101,6 @@ public class Transpiler
         return -1;
     }
 
-
-    public string TranslateTryCatch(List<string> tokens)
-    {
-        string tryString = "";
-        return tryString;
-    }
-
     public string TranslateListCreation(List<string> tokens)
     {
         string listString = "";
@@ -155,6 +152,11 @@ public class Transpiler
                     func += TranslateVarDefinition(tokensForVar);
                     i++;
                 }
+                else if(currentTok.Equals("="))
+                {
+                    List<string> currentLine = GetLineOfToken(i, functionTokens);
+                    func += TranslateVarDefinition(currentLine);
+                }
             }
             else
             {
@@ -164,6 +166,52 @@ public class Transpiler
         }
 
         return func;
+    }
+
+    // input: line? errorHandling
+    /*
+    {
+        line
+        line
+    }
+    ?
+    {
+        error handling
+        error handling
+    }
+    */
+    public string TranslateTryCatch(List<string> tokens)
+    {
+        string tryCatch = "";
+
+        return tryCatch;
+    }
+
+    public List<string> GetLineOfToken(int index, List<string> tokens)
+    {
+        List<string> currentLine = new List<string>();
+        int start = -1;
+        int end = -1;
+
+        int indexRight = index;
+        int indexLeft = index;
+        while(start == -1 || end == -1)
+        {
+            if(lineEnders.Contains(tokens[indexRight]))
+            {
+                end = indexRight;
+            }
+            if(lineEnders.Contains(tokens[indexLeft]))
+            {
+                start = indexLeft + 1;
+            }
+            indexRight += 1;
+            indexLeft -= 1;
+        }
+
+        currentLine = tokens.Skip(start).Take(end - start + 1).ToList();
+
+        return currentLine;
     }
 
     public string TranslateToken(string tok)
@@ -179,11 +227,10 @@ public class Transpiler
             {"*", "*"},
             {";", ";"},
             {"r", "return "}
-
         };
 
         List<string> complexKeywords = new List<string>{
-            "if", "?", "while", ":="
+            "if", "?", "while", ":=", "="
         };
         if(LucToCSharpToken.Keys.Contains(tok))
         {
