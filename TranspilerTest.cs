@@ -135,4 +135,15 @@ public class TranspilerTests
         string actual = trans.TranslateFunction(tokens);
         Assert.Equal(expected, actual);
     }
+
+    public void TryCatchWithCodeInCatch_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "int", "test", "(", ")", "{","test", ":=", "10", ";", "?", "int", "i", "=", "10", "}"
+        };
+        Transpiler trans = new Transpiler(TestFilePath);
+        string expected = "public int test(){try{var test=10;}catch(Exception ex){int i=10;}";
+        string actual = trans.TranslateFunction(tokens);
+        Assert.Equal(expected, actual);
+    }
 }
