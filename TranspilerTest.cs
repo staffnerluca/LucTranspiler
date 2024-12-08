@@ -136,6 +136,7 @@ public class TranspilerTests
         Assert.Equal(expected, actual);
     }
 
+    [Fact]
     public void TryCatchWithCodeInCatch_Test()
     {
         List<string> tokens = new List<string>(){
@@ -144,6 +145,18 @@ public class TranspilerTests
         Transpiler trans = new Transpiler(TestFilePath);
         string expected = "public int test(){try{var test=10;}catch(Exception ex){int i=10;}";
         string actual = trans.TranslateFunction(tokens);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void TranslateListCreation_Test()
+    {
+         List<string> tokens = new List<string>(){
+            "testList", ":=", "[", "10", "20", "30", "]", ";"
+        };
+        string expected = "List<int> testList= new List<int>(){10, 20, 30};";
+        Transpiler trans = new Transpiler(TestFilePath);
+        string actual = trans.TranslateListCreation(tokens);
         Assert.Equal(expected, actual);
     }
 }

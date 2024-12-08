@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Principal;
 using System.Text.Json;
@@ -78,6 +79,27 @@ public class Transpiler
         return -1;
     }
 
+    public string GetDatatypeOfToken(string token)
+    {
+        if(token[0].Equals('"') || token[0].Equals("'"))
+        {
+            return "string";
+        }
+        else if(int.TryParse(token, out int result))
+        {
+            return "int";
+        }
+        else if(bool.TryParse(token, out bool res))
+        {
+            return "bool";
+        }
+        else if(double.TryParse(token, out double resu))
+        {
+            return "double";
+        }
+        return "object";
+    }
+
     public int GetDistanceToClosingBrackets(List<string> tokens, string bracket)
     {
         Dictionary<string, string> bracketMapping = new Dictionary<string, string>{
@@ -116,9 +138,56 @@ public class Transpiler
         return -1;
     }
 
+    // sLUC format vor lists:
+    // list := ["element", "element"];
+    // or
+    // list[int] = [10, 20];
     public string TranslateListCreation(List<string> tokens)
     {
-        string listString = "";
+        string listString = "List<";
+
+        bool simplified = false;
+        int posOfEq = 0;
+        for(int i = 0; i < tokens.Count; i++)
+        {
+            if(tokens[i].Equals("["))
+            {
+                posOfEq = i;
+                simplified = true;
+            }
+            else if(tokens[i].Equals("=") || tokens[i].Equals(":="))
+            {
+                posOfEq = i;
+                break;
+            }
+        }
+        string datatype = "";
+        if(!simplified)
+        {
+            // for performance reaons it is not recommended to just use a list of objects, so it is necessary to evaluate the datatype here
+            datatype = GetDatatypeOfToken(tokens[posOfEq+2]);
+        }
+        else
+        {
+            datatype = tokens[2];
+        }
+        listString += datatype + "> " + tokens[posOfEq-1] + "= new List<" + datatype +">(){";
+        List<string> elements = new List<string>{};
+        for(int i = tokens.Count - 3; i > 0; i--)
+        {
+            if(tokens[i].Equals("["))
+            {
+                break;
+            }
+            elements.Insert(0, tokens[i]);
+        }
+        foreach(string element in elements)
+        {
+            listString += element + ", ";
+        }
+        // remove last ","
+        listString = listString.Substring(0, listString.Count() - 2);
+        listString += "};";
         return listString;
     }
 
