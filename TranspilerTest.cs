@@ -123,4 +123,16 @@ public class TranspilerTests
         char actual = t.GetClosestEndOfLineToken(2, tokens);
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public void OneLineTryCatch_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "int", "test", "(", ")", "{","test", ":=", "10", ";", "?", "}"
+        };
+        Transpiler trans = new Transpiler(TestFilePath);
+        string expected = "public int test(){try{var test=10;}catch(Exception ex){}";
+        string actual = trans.TranslateFunction(tokens);
+        Assert.Equal(expected, actual);
+    }
 }

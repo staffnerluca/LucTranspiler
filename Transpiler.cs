@@ -144,7 +144,8 @@ public class Transpiler
             currentPos += 1;
         }
         functionTokens.RemoveRange(0, currentPos);
-
+        bool simpleTryCatch = false;
+        string insertAfterNextEndOfLine = "";
         for(int i = 0; i < functionTokens.Count; i++)
         {
             string currentTok = functionTokens[i];
@@ -153,7 +154,27 @@ public class Transpiler
             {
                 if(currentTok.Equals("?"))
                 {
-                    TranslateTryCatch(functionTokens);
+                    bool singleLineErrorHandling = true;
+                    if(singleLineErrorHandling)
+                    {
+                        List<int> eolTokPos = new List<int>(){};
+                        int indexLastEolT = -1;
+                        // because the catch is after the end of the line
+                        string funcWithoutLastLineEnder = func.Substring(0, func.Length - 1);
+                        foreach(char lineEnder in lineEnders)
+                        {
+                            eolTokPos.Add(funcWithoutLastLineEnder.LastIndexOf(lineEnder));
+                        }
+                        indexLastEolT = eolTokPos.Max();
+                        if(indexLastEolT == -1)
+                        {
+                            indexLastEolT = 0;
+                        }
+                        func = func.Insert(indexLastEolT + 1, "try{");
+                        insertAfterNextEndOfLine = "}catch(Exception ex){";
+                        simpleTryCatch = true;
+                    }
+                    //TODO: handle mutli line try catch
                 }
                 else if(currentTok.Equals("["))
                 {
@@ -175,11 +196,19 @@ public class Transpiler
                     func += TranslateVarDefinition(currentLine);
                 }*/
             }
+            else if(lineEnders.Contains(token[0]))
+            {
+                func += insertAfterNextEndOfLine;
+                if(simpleTryCatch)
+                {
+                    insertAfterNextEndOfLine += "}";
+                }
+                func += token;
+            }
             else
             {
                 func += token;
             }
-
         }
 
         return func;
@@ -197,7 +226,8 @@ public class Transpiler
         error handling
     }
     */
-    public string TranslateTryCatch(List<string> tokens)
+    //      text, how many tokens to delete before and how many tokens to delete after the ? token
+    /*public (string, List<string>) TranslateTryCatch(List<string> tokens, int posOfQuestionmark)
     {
         string tryCatch = "try{";
         if(tokens[0].Equals("{"))
@@ -213,7 +243,7 @@ public class Transpiler
         }
 
         return tryCatch;
-    }
+    }*/
 
     public List<string> GetLineOfToken(int index, List<string> tokens)
     {
