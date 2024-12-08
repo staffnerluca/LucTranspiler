@@ -247,7 +247,9 @@ public class Transpiler
                 }
                 else if(currentTok.Equals("["))
                 {
-                    TranslateListCreation(functionTokens);
+                    List<string> line = GetLineOfToken(i, functionTokens);
+                    TranslateListCreation(line);
+                    GetStartAndEndOfLine(i, functionTokens);
                 }
                 else if(functionTokens[i].Equals(":="))
                 {
@@ -319,6 +321,17 @@ public class Transpiler
         List<string> currentLine = new List<string>();
         int start = -1;
         int end = -1;
+        (start, end) = GetStartAndEndOfLine(index, tokens);
+
+        currentLine = tokens.Skip(start).Take(end - start + 1).ToList();
+
+        return currentLine;
+    }
+
+    public (int, int) GetStartAndEndOfLine(int index, List<string> tokens)
+    {
+        int start = -1;
+        int end = -1;
 
         int indexRight = index;
         int indexLeft = index;
@@ -336,9 +349,7 @@ public class Transpiler
             indexLeft -= 1;
         }
 
-        currentLine = tokens.Skip(start).Take(end - start + 1).ToList();
-
-        return currentLine;
+        return(start, end);
     }
 
     public string TranslateToken(string tok)
