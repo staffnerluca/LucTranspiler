@@ -16,8 +16,8 @@ public class Transpiler
         // need to adjust so that every seperator that is not " " is added to the tokens
     };
 
-    private List<string> lineEnders = new List<string>(){
-        "\n", "{", "}", ";"
+    private List<char> lineEnders = new List<char>(){
+        '\n', '{', '}', ';'
     };
 
     public Transpiler(string filePath)
@@ -49,6 +49,21 @@ public class Transpiler
         string simplCode = File.ReadAllText("simplifiedCode.json");
         var code = JsonSerializer.Deserialize<Dictionary<int, List<string>>>(simplCode);
         return code;
+    }
+
+    public char GetClosestEndOfLineToken(int pos, List<string> tokens)
+    {
+        for(int i = 0; i <= pos; i++)
+        {
+            foreach(char lineEnder in lineEnders)
+            {
+                if(tokens[pos-i][0].Equals(lineEnder))
+                {
+                    return lineEnder;
+                }
+            }
+        }
+        return ' ';
     }
 
     public int FindMainFunction(Dictionary<int, List<string>> tokens)
@@ -144,19 +159,21 @@ public class Transpiler
                 {
                     TranslateListCreation(functionTokens);
                 }
-                else if(functionTokens[i+1].Equals(":="))
+                else if(functionTokens[i].Equals(":="))
                 {
                     List<string> tokensForVar = functionTokens.GetRange(i-1, i+1);
-                    functionTokens.RemoveRange(i-1, i+1);
-                    func.Substring(0, func.LastIndexOf(' '));
+                    func = func.Substring(0, func.LastIndexOf(GetClosestEndOfLineToken(i, functionTokens))+1);
                     func += TranslateVarDefinition(tokensForVar);
-                    i++;
-                }
+                    functionTokens.RemoveRange(i-1, i+1);
+                    // The number of tokens was reduced by a minimum of two and so I needs to decrease by 1
+                    //TODO: Account for more complex variable creations
+                    i-=2;
+                }/*
                 else if(currentTok.Equals("="))
                 {
                     List<string> currentLine = GetLineOfToken(i, functionTokens);
                     func += TranslateVarDefinition(currentLine);
-                }
+                }*/
             }
             else
             {
@@ -182,7 +199,18 @@ public class Transpiler
     */
     public string TranslateTryCatch(List<string> tokens)
     {
-        string tryCatch = "";
+        string tryCatch = "try{";
+        if(tokens[0].Equals("{"))
+        {
+
+        }
+        else
+        {
+            for(int i = 1; i < tokens.Count(); i++)
+            {
+                // Translate the line
+            }
+        }
 
         return tryCatch;
     }
@@ -197,11 +225,11 @@ public class Transpiler
         int indexLeft = index;
         while(start == -1 || end == -1)
         {
-            if(lineEnders.Contains(tokens[indexRight]))
+            if(lineEnders.Contains(tokens[indexRight][0]))
             {
                 end = indexRight;
             }
-            if(lineEnders.Contains(tokens[indexLeft]))
+            if(lineEnders.Contains(tokens[indexLeft][0]))
             {
                 start = indexLeft + 1;
             }
@@ -226,11 +254,12 @@ public class Transpiler
             {"/", "/"},
             {"*", "*"},
             {";", ";"},
-            {"r", "return "}
+            {"r", "return "},
+            {"=", "="}
         };
 
         List<string> complexKeywords = new List<string>{
-            "if", "?", "while", ":=", "="
+            "if", "?", "while", ":=", //"="
         };
         if(LucToCSharpToken.Keys.Contains(tok))
         {
@@ -265,6 +294,23 @@ public class Transpiler
             }
         }
         return translation; 
+    }
+
+    public string TrnslateLine(List<string> tokens)
+    {
+        string outp = "";
+        // only provisional
+        foreach(string token in tokens)
+        {
+            outp += TranslateToken(token);
+        }
+        return "";
+    }
+
+    // function to that calles the rest of the translation functions
+    public string Translate()
+    {
+        return "";
     }
 
     public string GenerateCSharpCode()

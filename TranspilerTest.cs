@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using Xunit;
 
@@ -109,5 +110,17 @@ public class TranspilerTests
 
         Assert.Equal(expected, output);
 
+    }
+
+    [Fact]
+    public void GetClosestEndOfLineToken_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "awesome", "{", "end", "the", "line"
+        };
+        char expected = '{';
+        Transpiler t = new Transpiler(TestFilePath);
+        char actual = t.GetClosestEndOfLineToken(2, tokens);
+        Assert.Equal(expected, actual);
     }
 }
