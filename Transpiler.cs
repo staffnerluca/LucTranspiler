@@ -246,7 +246,7 @@ public class Transpiler
                             indexLastEolT = 0;
                         }
                         func = func.Insert(indexLastEolT + 1, "try{");
-                        insertAfterNextEndOfLine = "}catch(Exception ex){";
+                        func += "}catch(Exception ex){";
                         simpleTryCatch = true;
                     }
                     //TODO: handle mutli line try catch
