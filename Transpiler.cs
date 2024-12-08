@@ -145,7 +145,7 @@ public class Transpiler
     public string TranslateListCreation(List<string> tokens)
     {
         string listString = "List<";
-
+        string listName = "";
         bool simplified = false;
         int posOfEq = 0;
         for(int i = 0; i < tokens.Count; i++)
@@ -166,12 +166,14 @@ public class Transpiler
         {
             // for performance reaons it is not recommended to just use a list of objects, so it is necessary to evaluate the datatype here
             datatype = GetDatatypeOfToken(tokens[posOfEq+2]);
+            listName = tokens[posOfEq-1];
         }
         else
         {
+            listName = tokens[0];
             datatype = tokens[2];
         }
-        listString += datatype + "> " + tokens[posOfEq-1] + "= new List<" + datatype +">(){";
+        listString += datatype + "> " + listName + "= new List<" + datatype +">(){";
         List<string> elements = new List<string>{};
         for(int i = tokens.Count - 3; i > 0; i--)
         {
@@ -251,11 +253,11 @@ public class Transpiler
                     int end = 0;
                     (start, end) = GetStartAndEndOfLine(i, functionTokens);
                     List<string> line = functionTokens.GetRange(start, end);
-                    TranslateListCreation(line);
-                    // TODO: Delete the entire line in the string
                     char eol = GetClosestEndOfLineToken(i, functionTokens);
                     int eolIndex = func.LastIndexOf(eol);
                     func = func.Substring(0, eolIndex);
+                    func += TranslateListCreation(line);
+                    // TODO: Delete the entire line in the string
                 }
                 else if(functionTokens[i].Equals(":="))
                 {
@@ -341,7 +343,7 @@ public class Transpiler
 
         int indexRight = index;
         int indexLeft = index;
-        while(start == -1 || end == -1)
+        while((start == -1 || end == -1) && indexLeft > 0 && indexRight < tokens.Count()-2)
         {
             if(lineEnders.Contains(tokens[indexRight][0]))
             {
@@ -354,7 +356,15 @@ public class Transpiler
             indexRight += 1;
             indexLeft -= 1;
         }
-
+        if(start == -1)
+        {
+            start = 0;
+        }
+        if(end == -1)
+        {
+            // -2 to exclude the line ending token
+            end = tokens.Count()-2;
+        }
         return(start, end);
     }
 
@@ -375,7 +385,7 @@ public class Transpiler
         };
 
         List<string> complexKeywords = new List<string>{
-            "if", "?", "while", ":=", //"="
+            "if", "?", "while", ":=", "["//"="
         };
         if(LucToCSharpToken.Keys.Contains(tok))
         {

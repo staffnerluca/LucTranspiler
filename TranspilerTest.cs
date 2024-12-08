@@ -164,7 +164,7 @@ public class TranspilerTests
     public void TranslateListCreationWithTypeDeclaration_Test()
     {
         List<string> tokens = new List<string>(){
-            "testList", "[", "int", "]", "testList", "=", "[", "10", "20", "30", "]", ";"
+            "testList", "[", "int", "]", "=", "[", "10", "20", "30", "]", ";"
         };
         string expected = "List<int> testList= new List<int>(){10, 20, 30};";
         Transpiler trans = new Transpiler(TestFilePath);
@@ -173,14 +173,30 @@ public class TranspilerTests
     }
 
     [Fact]
-    public void TranslateFucntionWithListDeclaration_Test ()
+    public void TranslateFucntionWithListDeclaration_Test()
     {
         List<string> tokens = new List<string>(){
-             "function", "int", "test", "(", ")", "{", "testList", "[", "int", "]", "testList", "=", "[", "10", "20", "30", "]", ";", "}"
+             "function", "int", "test", "(", ")", "{", "testList", "[", "int", "]", "=", "[", "10", "20", "30", "]", ";", "}"
         };
         string expected = "public int test(){List<int> testList= new List<int>(){10, 20, 30};}";
         Transpiler trans = new Transpiler(TestFilePath);
         string actual = trans.TranslateFunction(tokens);
-        Assert.Equal(expected, actual);
+        Assert.True(actual == expected, actual);
+        //Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void GetStartAndEndOfLine_Test()
+    {
+        List<string> tokens = new List<string>(){
+             "function", "int", "test", "(", ")", "{", "testList", "[", "int", "]", "=", "[", "10", "20", "30", "]", ";", "}"
+        };
+        int expectedStart = 6;
+        int expectedEnd = 16;
+        Transpiler trans = new Transpiler(TestFilePath);
+        int actualStart = 0;
+        int actualEnd = 0;
+        (actualStart, actualEnd) = trans.GetStartAndEndOfLine(8, tokens); 
+        Assert.Equal((actualStart, actualEnd), (expectedStart, expectedEnd));
     }
 }
