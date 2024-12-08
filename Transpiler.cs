@@ -247,9 +247,15 @@ public class Transpiler
                 }
                 else if(currentTok.Equals("["))
                 {
-                    List<string> line = GetLineOfToken(i, functionTokens);
+                    int start = 0;
+                    int end = 0;
+                    (start, end) = GetStartAndEndOfLine(i, functionTokens);
+                    List<string> line = functionTokens.GetRange(start, end);
                     TranslateListCreation(line);
-                    GetStartAndEndOfLine(i, functionTokens);
+                    // TODO: Delete the entire line in the string
+                    char eol = GetClosestEndOfLineToken(i, functionTokens);
+                    int eolIndex = func.LastIndexOf(eol);
+                    func = func.Substring(0, eolIndex);
                 }
                 else if(functionTokens[i].Equals(":="))
                 {
