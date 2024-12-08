@@ -149,10 +149,22 @@ public class TranspilerTests
     }
 
     [Fact]
-    public void TranslateListCreation_Test()
+    public void TranslateListCreationWithoutTypeDeclared_Test()
     {
          List<string> tokens = new List<string>(){
             "testList", ":=", "[", "10", "20", "30", "]", ";"
+        };
+        string expected = "List<int> testList= new List<int>(){10, 20, 30};";
+        Transpiler trans = new Transpiler(TestFilePath);
+        string actual = trans.TranslateListCreation(tokens);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void TranslateListCreationWithTypeDeclaration_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "testList", "[", "int", "]", "testList", "=", "[", "10", "20", "30", "]", ";"
         };
         string expected = "List<int> testList= new List<int>(){10, 20, 30};";
         Transpiler trans = new Transpiler(TestFilePath);
