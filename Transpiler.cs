@@ -17,6 +17,10 @@ public class Transpiler
         // need to adjust so that every seperator that is not " " is added to the tokens
     };
 
+    private List<string> datatypes = new List<string>(){
+        "int", "bool", "string", "double"
+    };
+
     private List<char> lineEnders = new List<char>(){
         '\n', '{', '}', ';'
     };
@@ -247,17 +251,29 @@ public class Transpiler
                     }
                     //TODO: handle mutli line try catch
                 }
-                else if(currentTok.Equals("["))
+                else if(currentTok.Equals("[") && !datatypes.Contains(functionTokens[i+1]))
                 {
                     int start = 0;
                     int end = 0;
                     (start, end) = GetStartAndEndOfLine(i, functionTokens);
-                    List<string> line = functionTokens.GetRange(start, end);
+                    List<string> line = functionTokens.GetRange(start+1, end);
                     char eol = GetClosestEndOfLineToken(i, functionTokens);
                     int eolIndex = func.LastIndexOf(eol);
-                    func = func.Substring(0, eolIndex);
+                    func = func.Substring(0, eolIndex+1);
+
                     func += TranslateListCreation(line);
-                    // TODO: Delete the entire line in the string
+                    for(int j = i-3; j < functionTokens.Count(); j++)
+                    {
+                        if(!lineEnders.Contains(functionTokens[j][0]))
+                        {
+                            functionTokens.RemoveAt(j);
+                        }
+                        else
+                        {
+                            functionTokens.RemoveAt(j);
+                            break;
+                        }
+                    }
                 }
                 else if(functionTokens[i].Equals(":="))
                 {
