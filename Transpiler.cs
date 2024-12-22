@@ -421,7 +421,8 @@ public class Transpiler
     public string TranslateForHead(List<string> forHead)
     {
         string output = "";
-        bool isSimpleForeach = true;
+        bool isSimpleForeach = false;
+        bool isFullForeach = true;
         if(isSimpleForeach)
         {
             output += "foreach(var __lucIntern__ in ";
@@ -433,7 +434,27 @@ public class Transpiler
             output += forHead[listNamePos];
             output += ")";
         }
+        // example input: for(string word in words)
+        else if(isFullForeach)
+        {
+            output += "foreach(";
+            int start = 1;
+            if(forHead[1].Equals("("))
+            {
+                start += 1;
+            }
+            for(int i = start; i < forHead.Count(); i++)
+            {
+                output += TranslateToken(forHead[i]); 
+                if(!datatypes.Contains(forHead[i]))
+                {
+                    output += " ";
+                }
+            }
+            output = output.Substring(0, output.Length - 1);
+            output += ")";
 
+        }
         return output;
     }
 

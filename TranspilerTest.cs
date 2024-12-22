@@ -215,13 +215,28 @@ public class TranspilerTests
     }
 
     [Fact]
+    public void TranslateFullForeach_Test()
+    {
+        List<string> input = new List<string>()
+        {
+            "for", "string", "word", "in", "words"
+        };
+
+        string outputExpected = "foreach(string word in words)";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateForHead(input);
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
     public void TranslateForSimplified()
     {
         List<string> input = new List<string>(){
             "for", "i", "<", "20"
         };
 
-        string outputExpected = "for(int i = 0; i < 20; i++)";
+        string outputExpected = "for(int i=0; i<20; i++)";
         
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateForHead(input);
