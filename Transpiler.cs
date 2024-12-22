@@ -417,6 +417,24 @@ public class Transpiler
         }
     }
 
+
+    public string TranslateForHead(List<string> forHead)
+    {
+        string output = "";
+        bool isSimpleForeach = true;
+        if(isSimpleForeach)
+        {
+            output += "foreach(int __lucIntern__ in";
+            int listNamePos = 1;
+            if(forHead[1].Equals("("))
+            {
+                
+            }
+        }
+
+        return output;
+    }
+
     public string TranslateVarDefinition(List<string> tokens)
     {
         /*
@@ -438,6 +456,7 @@ public class Transpiler
         return translation; 
     }
 
+
     public string TrnslateLine(List<string> tokens)
     {
         string outp = "";
@@ -449,11 +468,13 @@ public class Transpiler
         return "";
     }
 
+
     // function to that calles the rest of the translation functions
     public string Translate()
     {
         return "";
     }
+
 
     public string GenerateCSharpCode()
     {

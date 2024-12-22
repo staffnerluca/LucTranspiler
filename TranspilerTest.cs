@@ -199,4 +199,56 @@ public class TranspilerTests
         (actualStart, actualEnd) = trans.GetStartAndEndOfLine(8, tokens); 
         Assert.Equal((actualStart, actualEnd), (expectedStart, expectedEnd));
     }
+
+    [Fact]
+    public void TranslateForeach_Test()
+    {
+        List<string> input = new List<string>(){
+            "for", "(", "list", ")"
+        };
+
+        string outputExpected = "foreach(var __lucIntern__ in list)";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateForHead(input);
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void TranslateForSimplified()
+    {
+        List<string> input = new List<string>(){
+            "for", "i", "<", "20"
+        };
+
+        string outputExpected = "for(int i = 0; i < 20; i++)";
+        
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateForHead(input);
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void TranslateForFull()
+    {
+        List<string> input = new List<string>(){
+            "for", "int", "i", "=", "20", ";", "i", ">", "10", ";", "-1",
+        };
+
+        string outputExpected = "for(int i = 20; i < 20; i > 10; i--)";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateForHead(input);
+        Assert.Equal(outputExpected, outputActual);
+    }
+    /*
+    [Fact]
+    public void TranslateComplexFunction_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "int", "testFunc", "(", "string", "word", ")", "{", 
+            "testList", "[", "int", "]", "=", "[", "10", "20", "30", "]", ";",
+            "for", ""
+        };
+    }*/
 }
