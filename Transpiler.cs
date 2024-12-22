@@ -424,12 +424,14 @@ public class Transpiler
         bool isSimpleForeach = true;
         if(isSimpleForeach)
         {
-            output += "foreach(int __lucIntern__ in";
+            output += "foreach(var __lucIntern__ in ";
             int listNamePos = 1;
             if(forHead[1].Equals("("))
             {
-                
+                listNamePos += 1;
             }
+            output += forHead[listNamePos];
+            output += ")";
         }
 
         return output;
