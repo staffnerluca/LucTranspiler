@@ -247,10 +247,10 @@ public class TranspilerTests
     public void TranslateForFull()
     {
         List<string> input = new List<string>(){
-            "for", "int", "i", "=", "20", ";", "i", ">", "10", ";", "-1",
+            "for", "int", "i", "=", "20", ";", "i", ">", "10", ";", "-",
         };
 
-        string outputExpected = "for(int i=20;i<20;i>10;i--)";
+        string outputExpected = "for ( int i = 20 ; i > 10 ; i--) ";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateForHead(input);

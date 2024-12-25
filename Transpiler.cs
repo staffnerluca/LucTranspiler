@@ -487,7 +487,41 @@ public class Transpiler
             }
             output += "int " + variable + "=0;" + variable + compOperator + value + ";" + "i++" + ")";
         }
-
+        else
+        {
+            int variableIndex = forHead.IndexOf("int") + 1;
+            if(variableIndex == -1)
+            {
+                if(forHead[1].Equals("("))
+                {
+                    variableIndex = 2;
+                }
+                else
+                {
+                    variableIndex = 1;
+                }
+            }
+            string variable = forHead[variableIndex];
+            foreach(string t in forHead)
+            {
+                if(t.Contains("+") || t.Contains("-"))
+                {
+                    if(t.Equals("+"))
+                    {
+                        output += variable + "++";
+                    }
+                    else if(t.Equals("-"))
+                    {
+                        output += variable + "--";
+                    }
+                }
+                else
+                {
+                    output += t + " ";
+                }
+            }
+            output.TrimEnd();
+        }
         return output;
     }
 
