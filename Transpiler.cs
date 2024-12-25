@@ -25,6 +25,10 @@ public class Transpiler
         '\n', '{', '}', ';'
     };
 
+    private List<string> comparisonOperators = new List<string>(){
+        "<", ">", ">=", "<=", "=="
+    };
+
     public Transpiler(string filePath)
     {
         filePath = this.filePath;
@@ -420,20 +424,25 @@ public class Transpiler
 
     public string TranslateForHead(List<string> forHead)
     {
+        if(!forHead[1].Equals("("))
+        {
+            forHead.Insert(1, "(");
+            forHead.Add(")");
+        }
         string output = "";
-        bool isSimpleForeach = false;
-        bool isFullForeach = true;
+        bool isSimpleForeach = forHead.Count() == 4 || forHead.Count() == 2;
+        bool isFullForeach = forHead.Contains("in");
+        bool simpleFor = forHead.Count() == 6 || forHead.Count() == 5;
+
+        // example input: for(list)
         if(isSimpleForeach)
         {
             output += "foreach(var __lucIntern__ in ";
-            int listNamePos = 1;
-            if(forHead[1].Equals("("))
-            {
-                listNamePos += 1;
-            }
+            int listNamePos = 2;
             output += forHead[listNamePos];
             output += ")";
         }
+
         // example input: for(string word in words)
         else if(isFullForeach)
         {
@@ -452,9 +461,33 @@ public class Transpiler
                 }
             }
             output = output.Substring(0, output.Length - 1);
-            output += ")";
-
         }
+
+        // for(i<20)
+        else if(simpleFor)
+        {
+            output += "for(";
+            string variable = forHead[2];
+            string compOperator = forHead[3];
+            string value = forHead[4];
+            if(comparisonOperators.Contains(forHead[2]))
+            {
+                compOperator = forHead[2];
+                value = forHead[3];
+
+                string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                Random random = new Random();
+                char[] result = new char[5];
+
+                for (int i = 0; i < result.Length; i++)
+                {
+                    result[i] = chars[random.Next(chars.Length)];
+                }
+                variable = new string(result);
+            }
+            output += "int " + variable + "=0;" + variable + compOperator + value + ";" + "i++" + ")";
+        }
+
         return output;
     }
 

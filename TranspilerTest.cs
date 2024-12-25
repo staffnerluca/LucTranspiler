@@ -222,7 +222,7 @@ public class TranspilerTests
             "for", "string", "word", "in", "words"
         };
 
-        string outputExpected = "foreach(string word in words)";
+        string outputExpected = "foreach(string word in words )";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateForHead(input);
@@ -236,7 +236,7 @@ public class TranspilerTests
             "for", "i", "<", "20"
         };
 
-        string outputExpected = "for(int i=0; i<20; i++)";
+        string outputExpected = "for(int i=0;i<20;i++)";
         
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateForHead(input);
@@ -250,7 +250,7 @@ public class TranspilerTests
             "for", "int", "i", "=", "20", ";", "i", ">", "10", ";", "-1",
         };
 
-        string outputExpected = "for(int i = 20; i < 20; i > 10; i--)";
+        string outputExpected = "for(int i=20;i<20;i>10;i--)";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateForHead(input);
