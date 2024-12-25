@@ -216,6 +216,46 @@ public class Transpiler
         return listString;
     }
 
+    // standard case: function int bla(string token){}
+    public string TranslateFunctionHead(List<string> tokens)
+    {
+        string output = "";
+        output = "public ";
+        int nextTok = 2;
+        if(tokens[1].Equals("["))
+        {
+            output += "List<" + tokens[2] + "> ";
+            nextTok += 2;
+        }
+        else
+        {
+            output += TranslateToken(tokens[1]); // return value
+        }
+        output += tokens[nextTok]; // adds name of the function
+        output += tokens[nextTok+1];
+        bool endOfHead = false;
+        int currentPos = nextTok+2;
+        while(!endOfHead && currentPos < tokens.Count())
+        {
+            if(tokens[currentPos].Equals(")"))
+            {
+                output += ")";
+                endOfHead = true;
+                currentPos++;
+                break;
+            }
+            else if(tokens[currentPos].Equals("["))
+            {
+                output += "List<" + tokens[currentPos + 1] + "> ";
+                currentPos += 3;
+            }
+            output += TranslateToken(tokens[currentPos]);
+            currentPos += 1;
+        }
+        tokens.RemoveRange(0, currentPos);
+        return output;
+    }
+
     // function format in sLUC: function [return_type] name([parameters])
     public string TranslateFunction(List<string> functionTokens)
     {

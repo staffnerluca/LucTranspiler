@@ -274,4 +274,19 @@ public class TranspilerTests
         string outputActual = tok.TranslateFunction(tokens);
         Assert.Equal(outputExpected, outputActual);
     }
+
+    [Fact]
+    public void TranslateBubbleSortHead_Test()
+    {
+        List<string> tokens = new List<string>()
+        {
+            "function", "[", "int", "]", "bubble_sort", "(", "[", "int", "]", "to_sort", ")"
+        };
+
+        string outputExpected = "public List<int> bubble_sort(List<int> to_sort)";
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateFunctionHead(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
 }
