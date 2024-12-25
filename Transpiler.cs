@@ -60,13 +60,28 @@ public class Transpiler
         return code;
     }
 
-    public char GetClosestEndOfLineToken(int pos, List<string> tokens)
+    public char GetClosestEndOfLineTokenBefore(int pos, List<string> tokens)
     {
         for(int i = 0; i <= pos; i++)
         {
             foreach(char lineEnder in lineEnders)
             {
                 if(tokens[pos-i][0].Equals(lineEnder))
+                {
+                    return lineEnder;
+                }
+            }
+        }
+        return ' ';
+    }
+
+    public char GetClosestEndOfLineTokenAfter(int pos, List<string> tokens)
+    {
+        for(int i = 0; i <= tokens.Count() - pos; i++)
+        {
+            foreach(char lineEnder in lineEnders)
+            {
+                if(tokens[pos+i][0].Equals(lineEnder))
                 {
                     return lineEnder;
                 }
@@ -210,7 +225,7 @@ public class Transpiler
         func += functionTokens[3];
         bool endOfHead = false;
         int currentPos = 4;
-        while(!endOfHead && currentPos < functionTokens.Count)
+        while(!endOfHead && currentPos < functionTokens.Count())
         {
             if(functionTokens[currentPos].Equals(")"))
             {
@@ -261,7 +276,7 @@ public class Transpiler
                     int end = 0;
                     (start, end) = GetStartAndEndOfLine(i, functionTokens);
                     List<string> line = functionTokens.GetRange(start+1, end);
-                    char eol = GetClosestEndOfLineToken(i, functionTokens);
+                    char eol = GetClosestEndOfLineTokenBefore(i, functionTokens);
                     int eolIndex = func.LastIndexOf(eol);
                     func = func.Substring(0, eolIndex+1);
 
@@ -282,10 +297,10 @@ public class Transpiler
                 else if(functionTokens[i].Equals(":="))
                 {
                     List<string> tokensForVar = functionTokens.GetRange(i-1, i+1);
-                    func = func.Substring(0, func.LastIndexOf(GetClosestEndOfLineToken(i, functionTokens))+1);
+                    func = func.Substring(0, func.LastIndexOf(GetClosestEndOfLineTokenBefore(i, functionTokens))+1);
                     func += TranslateVarDefinition(tokensForVar);
                     functionTokens.RemoveRange(i-1, i+1);
-                    // The number of tokens was reduced by a minimum of two and so I needs to decrease by 1
+                    // The number of tokens was reduced by a minimum of two and so it needs to decrease by 1
                     //TODO: Account for more complex variable creations
                     i-=2;
                 }/*
@@ -294,6 +309,24 @@ public class Transpiler
                     List<string> currentLine = GetLineOfToken(i, functionTokens);
                     func += TranslateVarDefinition(currentLine);
                 }*/
+                else if(currentTok.Equals("for"))
+                {
+                    bool found = false;
+                    int pos = i;
+                    while(!found)
+                    {   
+                        if(!functionTokens[pos].Equals("{"))
+                        {
+                            pos += 1;
+                        }
+                        else
+                        {
+                            found = true;
+                        }
+                    }
+                    func += TranslateForHead(functionTokens.GetRange(i, pos - i)) + "{";
+                    functionTokens.RemoveRange(i, pos - i);
+                }
             }
             else if(lineEnders.Contains(token[0]))
             {
@@ -405,7 +438,7 @@ public class Transpiler
         };
 
         List<string> complexKeywords = new List<string>{
-            "if", "?", "while", ":=", "["//"="
+            "if", "?", "while", ":=", "[", "for" //"="
         };
         if(LucToCSharpToken.Keys.Contains(tok))
         {
@@ -421,7 +454,7 @@ public class Transpiler
         }
     }
 
-
+    // TODO: translate some more special cases
     public string TranslateForHead(List<string> forHead)
     {
         if(!forHead[1].Equals("("))

@@ -113,14 +113,14 @@ public class TranspilerTests
     }
 
     [Fact]
-    public void GetClosestEndOfLineToken_Test()
+    public void GetClosestEndOfLineTokenBefore_Test()
     {
         List<string> tokens = new List<string>(){
             "awesome", "{", "end", "the", "line"
         };
         char expected = '{';
         Transpiler t = new Transpiler(TestFilePath);
-        char actual = t.GetClosestEndOfLineToken(2, tokens);
+        char actual = t.GetClosestEndOfLineTokenBefore(2, tokens);
         Assert.Equal(expected, actual);
     }
 
@@ -256,14 +256,22 @@ public class TranspilerTests
         string outputActual = trans.TranslateForHead(input);
         Assert.Equal(outputExpected, outputActual);
     }
-    /*
+
     [Fact]
     public void TranslateComplexFunction_Test()
     {
         List<string> tokens = new List<string>(){
             "function", "int", "testFunc", "(", "string", "word", ")", "{", 
             "testList", "[", "int", "]", "=", "[", "10", "20", "30", "]", ";",
-            "for", ""
+            "for", "(", "testList", ")", "{",
+            "print", "(", "'Hello World'", ")", ";", "}",
+            "r", "10", ";",
+            "}"
         };
-    }*/
+        string outputExpected = "public int testFunc(string word){List<int> testList= new List<int>(){10, 20, 30};foreach(var __lucIntern__ in testList){print('Hello World');}return 10;}";
+
+        Transpiler tok = new Transpiler(TestFilePath);
+        string outputActual = tok.TranslateFunction(tokens);
+        Assert.Equal(outputExpected, outputActual);
+    }
 }
