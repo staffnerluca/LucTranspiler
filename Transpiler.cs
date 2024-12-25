@@ -252,32 +252,16 @@ public class Transpiler
             output += TranslateToken(tokens[currentPos]);
             currentPos += 1;
         }
-        tokens.RemoveRange(0, currentPos);
         return output;
     }
 
     // function format in sLUC: function [return_type] name([parameters])
     public string TranslateFunction(List<string> functionTokens)
-    {
-        string func = "public ";
-        func += TranslateToken(functionTokens[1]); // return value
-        func += functionTokens[2]; // adds name of the function
-        func += functionTokens[3];
-        bool endOfHead = false;
-        int currentPos = 4;
-        while(!endOfHead && currentPos < functionTokens.Count())
-        {
-            if(functionTokens[currentPos].Equals(")"))
-            {
-                func += ")";
-                endOfHead = true;
-                currentPos++;
-                break;
-            }
-            func += TranslateToken(functionTokens[currentPos]);
-            currentPos += 1;
-        }
-        functionTokens.RemoveRange(0, currentPos);
+    {   
+        string func = "";
+        int endOfHead = functionTokens.IndexOf("{", 0);
+        func += TranslateFunctionHead(functionTokens.GetRange(0, endOfHead));
+        functionTokens.RemoveRange(0, endOfHead);
         bool simpleTryCatch = false;
         string insertAfterNextEndOfLine = "";
         for(int i = 0; i < functionTokens.Count; i++)
