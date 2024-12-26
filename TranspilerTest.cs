@@ -289,4 +289,21 @@ public class TranspilerTests
 
         Assert.Equal(outputExpected, outputActual);
     }
+
+    [Fact]
+    public void TranslateBubbleSort_Test()
+    {
+        List<string> tokens = new List<string>()
+        {
+            "function", "[", "int", "]", "bubble_sort", "(", "[", "int", "]", "to_sort", ")", "{", 
+            "for", "(", "int", "i", "=", "1", ";", "i", "<=", "len", "(", "to_sort", ")", "-1", ";", "+", ")", "{",
+            "}"
+        };
+
+        string outputExpected = "public List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count() - 1; i++)}";
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
 }

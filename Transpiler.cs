@@ -90,6 +90,12 @@ public class Transpiler
         return ' ';
     }
 
+    // TODO: write function
+    public bool IsValidVar(string token)
+    {
+        return true;
+    }
+
     public int FindMainFunction(Dictionary<int, List<string>> tokens)
     {
         foreach(int key in tokens.Keys)
@@ -215,6 +221,36 @@ public class Transpiler
         listString += "};";
         return listString;
     }
+    
+    // example input: len(testList);
+    public string TranslateCallOfInherentFunction(List<string> tokens)
+    {
+        string output = "";
+        Dictionary<string, List<string>> functionMapping = new Dictionary<string, List<string>>()
+        {
+            /* 
+                key: luc name of function, value: C# name of function, 
+                type (parameter if the parameter from luc is kept as parameter || object if the first parameter is the object calling the function for example list.Count()),
+                then what needs to be importet to use the function properly
+            */
+            {"print", new List<string>{"Console.WriteLine", "parameter", "using System"}},
+            {"len", new List<string>{"Count", "object", " using System"}}
+        };
+        try
+        {
+            List<string> values = functionMapping[tokens[0]];
+            if(values[1].Equals("object"))
+            {
+                output += tokens[2] + "." + tokens[0] + "()" + ";";
+            }
+            // TODO: add handling parameter
+        }
+        catch(KeyNotFoundException ex)
+        {
+            return "not_inherent";
+        }
+        return output;
+    }
 
     // standard case: function int bla(string token){}
     public string TranslateFunctionHead(List<string> tokens)
@@ -268,7 +304,16 @@ public class Transpiler
         {
             string currentTok = functionTokens[i];
             string token = TranslateToken(currentTok);
-            if(token.Equals("__complex__"))
+
+            //if(IsValidVar(token) && TranslateToken(functionTokens[i+1]).Equals("("))
+            // TODO: Revisit if there are any edge cases not accounted for with this approach
+            if(TranslateToken(functionTokens[i]).Equals("("))
+            {
+                int fucntionEndIndex = functionTokens.IndexOf(")", i);
+                func += TranslateCallOfInherentFunction(functionTokens.GetRange(i-1, fucntionEndIndex));
+                functionTokens.RemoveRange(i, fucntionEndIndex);
+            }
+            else if(token.Equals("__complex__"))
             {
                 if(currentTok.Equals("?"))
                 {
