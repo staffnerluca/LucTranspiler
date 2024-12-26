@@ -291,6 +291,37 @@ public class TranspilerTests
     }
 
     [Fact]
+    public void TranslateFunctionCallParameter_Test()
+    {
+        List<string> tokens = new List<string>()
+        {
+            "print", "(", "'Hello World'", ")", ";"
+        };
+
+        string outputExpected = "Console.WriteLine('Hello World')";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateCallOfInherentFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void TranslateCallOfInherentFunctionObject_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "len", "(", "testList", ")", ";"
+        };
+
+        string outputExpected = "testList.Count();";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateCallOfInherentFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
     public void TranslateBubbleSort_Test()
     {
         List<string> tokens = new List<string>()

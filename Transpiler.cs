@@ -241,7 +241,11 @@ public class Transpiler
             List<string> values = functionMapping[tokens[0]];
             if(values[1].Equals("object"))
             {
-                output += tokens[2] + "." + tokens[0] + "()" + ";";
+                output += tokens[2] + "." + values[0] + "()" + ";";
+            }
+            else if(values[1].Equals("parameter"))
+            {
+                output += values[0] + "(" + tokens[2] + ")";
             }
             // TODO: add handling parameter
         }
@@ -300,20 +304,28 @@ public class Transpiler
         functionTokens.RemoveRange(0, endOfHead);
         bool simpleTryCatch = false;
         string insertAfterNextEndOfLine = "";
-        for(int i = 0; i < functionTokens.Count; i++)
+        for(int i = 0; i < functionTokens.Count(); i++)
         {
             string currentTok = functionTokens[i];
             string token = TranslateToken(currentTok);
 
             //if(IsValidVar(token) && TranslateToken(functionTokens[i+1]).Equals("("))
             // TODO: Revisit if there are any edge cases not accounted for with this approach
-            if(TranslateToken(functionTokens[i]).Equals("("))
+            try
             {
-                int fucntionEndIndex = functionTokens.IndexOf(")", i);
-                func += TranslateCallOfInherentFunction(functionTokens.GetRange(i-1, fucntionEndIndex));
-                functionTokens.RemoveRange(i, fucntionEndIndex);
-            }
-            else if(token.Equals("__complex__"))
+                if(functionTokens[i+1].Equals("("))
+                {
+                    int fucntionEndIndex = functionTokens.IndexOf(")", i);
+                    return "Hello world";
+                    func += TranslateCallOfInherentFunction(functionTokens.GetRange(i, fucntionEndIndex));
+                    functionTokens.RemoveRange(i, fucntionEndIndex);
+                }
+            }catch(ArgumentOutOfRangeException ex)
+            {
+                return func + "}";
+            };
+
+            if(token.Equals("__complex__"))
             {
                 if(currentTok.Equals("?"))
                 {
