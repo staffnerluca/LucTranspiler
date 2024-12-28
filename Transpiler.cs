@@ -29,6 +29,17 @@ public class Transpiler
         "<", ">", ">=", "<=", "=="
     };
 
+    public Dictionary<string, List<string>> functionMapping = new Dictionary<string, List<string>>()
+    {
+        /* 
+            key: luc name of function, value: C# name of function, 
+            type (parameter if the parameter from luc is kept as parameter || object if the first parameter is the object calling the function for example list.Count()),
+            then what needs to be importet to use the function properly
+        */
+        {"print", new List<string>{"Console.WriteLine", "parameter", "using System"}},
+        {"len", new List<string>{"Count", "object", " using System"}}
+    };
+
     public Transpiler(string filePath)
     {
         filePath = this.filePath;
@@ -38,6 +49,7 @@ public class Transpiler
     {
         return "";
     }
+
 
     #region Helper functions
     public List<string> GetLines()
@@ -226,22 +238,17 @@ public class Transpiler
     public string TranslateCallOfInherentFunction(List<string> tokens)
     {
         string output = "";
-        Dictionary<string, List<string>> functionMapping = new Dictionary<string, List<string>>()
+        foreach(string token in tokens)
         {
-            /* 
-                key: luc name of function, value: C# name of function, 
-                type (parameter if the parameter from luc is kept as parameter || object if the first parameter is the object calling the function for example list.Count()),
-                then what needs to be importet to use the function properly
-            */
-            {"print", new List<string>{"Console.WriteLine", "parameter", "using System"}},
-            {"len", new List<string>{"Count", "object", " using System"}}
-        };
+            Console.WriteLine(token);
+        }
+        Console.WriteLine("#########################");
         try
         {
             List<string> values = functionMapping[tokens[0]];
             if(values[1].Equals("object"))
             {
-                output += tokens[2] + "." + values[0] + "()" + ";";
+                output += tokens[2] + "." + values[0] + "()";
             }
             else if(values[1].Equals("parameter"))
             {
@@ -304,26 +311,22 @@ public class Transpiler
         functionTokens.RemoveRange(0, endOfHead);
         bool simpleTryCatch = false;
         string insertAfterNextEndOfLine = "";
+
         for(int i = 0; i < functionTokens.Count(); i++)
         {
             string currentTok = functionTokens[i];
             string token = TranslateToken(currentTok);
-
+            /*Console.WriteLine("Current token: " + currentTok);
+            Console.WriteLine("Current output: " + func);
+            Console.WriteLine("#####################");*/
             //if(IsValidVar(token) && TranslateToken(functionTokens[i+1]).Equals("("))
             // TODO: Revisit if there are any edge cases not accounted for with this approach
-            try
-            {
-                if(functionTokens[i+1].Equals("("))
+                if(functionMapping.Keys.Contains(functionTokens[i]))
                 {
                     int fucntionEndIndex = functionTokens.IndexOf(")", i);
-                    return "Hello world";
-                    func += TranslateCallOfInherentFunction(functionTokens.GetRange(i, fucntionEndIndex));
+                    func += TranslateCallOfInherentFunction(functionTokens.GetRange(i-1, fucntionEndIndex));
                     functionTokens.RemoveRange(i, fucntionEndIndex);
                 }
-            }catch(ArgumentOutOfRangeException ex)
-            {
-                return func + "}";
-            };
 
             if(token.Equals("__complex__"))
             {
@@ -536,6 +539,7 @@ public class Transpiler
     }
 
     // TODO: translate some more special cases
+    // TODO: translate Function in foreach
     public string TranslateForHead(List<string> forHead)
     {
         if(!forHead[1].Equals("("))
@@ -616,25 +620,45 @@ public class Transpiler
                 }
             }
             string variable = forHead[variableIndex];
-            foreach(string t in forHead)
+            for(int i = 0; i < forHead.Count(); i++)
             {
+                string t = forHead[i];
                 if(t.Contains("+") || t.Contains("-"))
                 {
                     if(t.Equals("+"))
                     {
-                        output += variable + "++";
+                        output += variable + "+";
                     }
                     else if(t.Equals("-"))
                     {
-                        output += variable + "--";
+                        output += variable + "-";
                     }
+                }
+                if(t.Equals("(") && !forHead[i-1].Equals("for"))
+                {
+                    int functionEndIndex = forHead.IndexOf(")", i);
+                    Console.WriteLine("Index is: " + functionEndIndex.ToString());
+                    Console.WriteLine(forHead.Count().ToString());
+                    output += TranslateCallOfInherentFunction(forHead.GetRange(i-1, 4));
+                    i += functionEndIndex - i;
                 }
                 else
                 {
-                    output += t + " ";
+                    try
+                    {
+                        if(!forHead[i+1].Equals("(") || forHead[i].Equals("for"))
+                        {
+                            output += t + " ";
+                        }
+
+                    }catch(ArgumentOutOfRangeException ex)
+                    {
+                        continue;
+                    }
                 }
             }
-            output.TrimEnd();
+            output = output.TrimEnd();
+            output += ")";
         }
         return output;
     }
@@ -703,5 +727,5 @@ public class Transpiler
                 }
             }";
     }
-} 
+}
 #endregion

@@ -250,7 +250,7 @@ public class TranspilerTests
             "for", "int", "i", "=", "20", ";", "i", ">", "10", ";", "-",
         };
 
-        string outputExpected = "for ( int i = 20 ; i > 10 ; i--) ";
+        string outputExpected = "for ( int i = 20 ; i > 10 ; i--)";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateForHead(input);
@@ -310,10 +310,10 @@ public class TranspilerTests
     public void TranslateCallOfInherentFunctionObject_Test()
     {
         List<string> tokens = new List<string>(){
-            "len", "(", "testList", ")", ";"
+            "len", "(", "testList", ")"
         };
 
-        string outputExpected = "testList.Count();";
+        string outputExpected = "testList.Count()";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateCallOfInherentFunction(tokens);
@@ -331,7 +331,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count() - 1; i++)}";
+        string outputExpected = "public List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){}";
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateFunction(tokens);
 
