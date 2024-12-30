@@ -185,6 +185,12 @@ public class Transpiler
     // list[int] = [10, 20];
     public string TranslateListCreation(List<string> tokens)
     {
+        Console.WriteLine("Creating a List");
+        foreach(string tok in tokens)
+        {
+            Console.WriteLine(tok);
+        }
+        Console.WriteLine("#############End of list creation##############");
         string listString = "List<";
         string listName = "";
         bool simplified = false;
@@ -352,13 +358,30 @@ public class Transpiler
                     }
                     //TODO: handle mutli line try catch
                 }
+                // example list creation: my_list := [1, 2, 4] or [int] my_list = [1, 2, 4]
+                //                                2. condition to prevent it from getting procesed by the declaration of the datatype when creating a list
                 else if(currentTok.Equals("[") && !datatypes.Contains(functionTokens[i+1]))
                 {
                     int start = 0;
                     int end = 0;
                     (start, end) = GetStartAndEndOfLine(i, functionTokens);
                     List<string> line = functionTokens.GetRange(start+1, end-start);
-                    if(line.Contains("=") || line.Contains(":="))
+                    bool isDeclaration = false;
+                    Console.WriteLine("#####################SOL##################");
+                    // if the token after the = equals an [ it is a list declaration otherweise it is access
+                    for(int lineIndex = 0; lineIndex < line.Count(); lineIndex++)
+                    {
+                        if(line[lineIndex].Equals("[") && lineIndex > 0)
+                        {
+                            if(line[lineIndex-1].Equals("=") || line[lineIndex-1].Equals(":="))
+                            {
+                                isDeclaration = true;
+                            }
+                        }
+                    }
+                    Console.WriteLine("the result is: " + isDeclaration.ToString());
+                    Console.WriteLine("####################EOL#######################");
+                    if(isDeclaration)
                     {
                         char eol = GetClosestEndOfLineTokenBefore(i, functionTokens);
                         int eolIndex = func.LastIndexOf(eol);
@@ -417,6 +440,12 @@ public class Transpiler
                     functionTokens.RemoveRange(i, pos - i);
                 }
             }
+            else if(currentTok.Equals("if"))
+            {
+                // TODO: Handle more complex cases
+                func += token;
+
+            }
             else if(lineEnders.Contains(token[0]))
             {
                 func += insertAfterNextEndOfLine;
@@ -431,7 +460,7 @@ public class Transpiler
                 func += token;
             }
         }
-
+        Console.WriteLine(func);
         return func;
     }
 
@@ -527,7 +556,8 @@ public class Transpiler
         };
 
         List<string> complexKeywords = new List<string>{
-            "if", "?", "while", ":=", "[", "for" //"="
+            //"if", 
+            "?", "while", ":=", "[", "for" //"="
         };
         if(LucToCSharpToken.Keys.Contains(tok))
         {

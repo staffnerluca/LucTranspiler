@@ -336,7 +336,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){for ( int j = 0 ; j <= to_sort.Count()-1 ; j++){if(to_sort[j] > to_sort[j+1]){int temp = to_sort[j]; to_sort[j] = to_sort[j+1]; to_sort[j+1]=temp;}}}";
+        string outputExpected = "public List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){for ( int j = 0 ; j <= to_sort.Count()-1 ; j++){if(to_sort[j]>to_sort[j+1]){int temp=to_sort[j];to_sort[j]=to_sort[j+1];to_sort[j+1]=temp;}}}}";
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateFunction(tokens);
 
@@ -412,5 +412,35 @@ public class TranspilerTests
         string ouptutActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, ouptutActual);
+    }
+
+    [Fact]
+    public void TranslateIfWithAccessToListElement_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "test_func", "(", ")", "{", "if", "(", "ls", "[", "5", "]", ")", "{", "}", "}"
+        };
+
+        string outputExpected = "public void test_func(){if(ls[5]){}}";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+        [Fact]
+    public void TranslateIfWithAccessToListElementInVarDeclaration_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "test_func", "(", ")", "{", "int", "test", "=", "ls", "[", "5", "]", "}"
+        };
+
+        string outputExpected = "public void test_func(){int test=ls[5]}";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
     }
 }
