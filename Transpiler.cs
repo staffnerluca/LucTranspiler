@@ -238,11 +238,7 @@ public class Transpiler
     public string TranslateCallOfInherentFunction(List<string> tokens)
     {
         string output = "";
-        foreach(string token in tokens)
-        {
-            Console.WriteLine(token);
-        }
-        Console.WriteLine("#########################");
+
         try
         {
             List<string> values = functionMapping[tokens[0]];
@@ -273,6 +269,11 @@ public class Transpiler
         {
             output += "List<" + tokens[2] + "> ";
             nextTok += 2;
+        }
+        else if(!datatypes.Contains(tokens[1]))
+        {
+            output += "void ";
+            output += tokens[1];
         }
         else
         {
@@ -316,18 +317,13 @@ public class Transpiler
         {
             string currentTok = functionTokens[i];
             string token = TranslateToken(currentTok);
-            /*Console.WriteLine("Current token: " + currentTok);
-            Console.WriteLine("Current output: " + func);
-            Console.WriteLine("#####################");*/
-            //if(IsValidVar(token) && TranslateToken(functionTokens[i+1]).Equals("("))
-            // TODO: Revisit if there are any edge cases not accounted for with this approach
-                if(functionMapping.Keys.Contains(functionTokens[i]))
-                {
-                    int fucntionEndIndex = functionTokens.IndexOf(")", i);
-                    func += TranslateCallOfInherentFunction(functionTokens.GetRange(i-1, fucntionEndIndex));
-                    i += fucntionEndIndex - i;
-                }
 
+            if(functionMapping.Keys.Contains(currentTok))
+            {
+                int fucntionEndIndex = functionTokens.IndexOf(")", i);
+                func += TranslateCallOfInherentFunction(functionTokens.GetRange(i, fucntionEndIndex-i));
+                i += fucntionEndIndex - i;
+            }
             if(token.Equals("__complex__"))
             {
                 if(currentTok.Equals("?"))
@@ -528,7 +524,7 @@ public class Transpiler
         {
             return LucToCSharpToken[tok];
         }
-        else if(complexKeywords.Contains(tok))
+        else if(complexKeywords.Contains(tok) || functionMapping.Keys.Contains(tok))
         {
             return "__complex__";
         }

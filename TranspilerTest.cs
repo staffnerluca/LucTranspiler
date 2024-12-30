@@ -268,7 +268,7 @@ public class TranspilerTests
             "r", "10", ";",
             "}"
         };
-        string outputExpected = "public int testFunc(string word){List<int> testList= new List<int>(){10, 20, 30};foreach(var __lucIntern__ in testList){print('Hello World');}return 10;}";
+        string outputExpected = "public int testFunc(string word){List<int> testList= new List<int>(){10, 20, 30};foreach(var __lucIntern__ in testList){Console.WriteLine('Hello World');}return 10;}";
 
         Transpiler tok = new Transpiler(TestFilePath);
         string outputActual = tok.TranslateFunction(tokens);
@@ -366,5 +366,31 @@ public class TranspilerTests
         string outputActual = trans.TranslateCallOfInherentFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void TranslateTokenInherentFunc_Test()
+    {
+        string tok = "print";
+        string outputExpected = "__complex__";
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateToken(tok);
+        
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void TranslateInherentFunctionUsingTranslateFunction()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "test_func", "(", ")", "{", "print", "(", "'Hello World'", ")", ";", "}"
+        };
+
+        string outputExpected = "public void test_func(){Console.WriteLine('Hello World');}";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string ouptutActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
     }
 }
