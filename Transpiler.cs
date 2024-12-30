@@ -325,7 +325,7 @@ public class Transpiler
                 {
                     int fucntionEndIndex = functionTokens.IndexOf(")", i);
                     func += TranslateCallOfInherentFunction(functionTokens.GetRange(i-1, fucntionEndIndex));
-                    functionTokens.RemoveRange(i, fucntionEndIndex);
+                    i += fucntionEndIndex - i;
                 }
 
             if(token.Equals("__complex__"))
@@ -637,8 +637,6 @@ public class Transpiler
                 if(t.Equals("(") && !forHead[i-1].Equals("for"))
                 {
                     int functionEndIndex = forHead.IndexOf(")", i);
-                    Console.WriteLine("Index is: " + functionEndIndex.ToString());
-                    Console.WriteLine(forHead.Count().ToString());
                     output += TranslateCallOfInherentFunction(forHead.GetRange(i-1, 4));
                     i += functionEndIndex - i;
                 }

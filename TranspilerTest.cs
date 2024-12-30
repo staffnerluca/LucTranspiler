@@ -337,4 +337,34 @@ public class TranspilerTests
 
         Assert.Equal(outputExpected, outputActual);
     }
+
+    [Fact]
+    public void TranslateInhernetFunctionCallPrint_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "print", "(", "'Hello World'", ")"
+        };
+
+        string outputExpected = "Console.WriteLine('Hello World')";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateCallOfInherentFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void TranslateInhernetFunctionCallLen_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "len", "(", "my_list", ")"
+        };
+
+        string outputExpected = "my_list.Count()";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateCallOfInherentFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
 }
