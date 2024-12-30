@@ -189,6 +189,7 @@ public class Transpiler
         string listName = "";
         bool simplified = false;
         int posOfEq = 0;
+
         for(int i = 0; i < tokens.Count; i++)
         {
             if(tokens[i].Equals("["))
@@ -207,6 +208,7 @@ public class Transpiler
         {
             // for performance reaons it is not recommended to just use a list of objects, so it is necessary to evaluate the datatype here
             datatype = GetDatatypeOfToken(tokens[posOfEq+2]);
+            Console.WriteLine(tokens[posOfEq-1]);
             listName = tokens[posOfEq-1];
         }
         else
@@ -355,23 +357,30 @@ public class Transpiler
                     int start = 0;
                     int end = 0;
                     (start, end) = GetStartAndEndOfLine(i, functionTokens);
-                    List<string> line = functionTokens.GetRange(start+1, end);
-                    char eol = GetClosestEndOfLineTokenBefore(i, functionTokens);
-                    int eolIndex = func.LastIndexOf(eol);
-                    func = func.Substring(0, eolIndex+1);
-
-                    func += TranslateListCreation(line);
-                    for(int j = i-3; j < functionTokens.Count(); j++)
+                    List<string> line = functionTokens.GetRange(start+1, end-start);
+                    if(line.Contains("=") || line.Contains(":="))
                     {
-                        if(!lineEnders.Contains(functionTokens[j][0]))
+                        char eol = GetClosestEndOfLineTokenBefore(i, functionTokens);
+                        int eolIndex = func.LastIndexOf(eol);
+                        func = func.Substring(0, eolIndex+1);
+
+                        func += TranslateListCreation(line);
+                        for(int j = i-3; j < functionTokens.Count(); j++)
                         {
-                            functionTokens.RemoveAt(j);
+                            if(!lineEnders.Contains(functionTokens[j][0]))
+                            {
+                                functionTokens.RemoveAt(j);
+                            }
+                            else
+                            {
+                                functionTokens.RemoveAt(j);
+                                break;
+                            }
                         }
-                        else
-                        {
-                            functionTokens.RemoveAt(j);
-                            break;
-                        }
+                    }
+                    else
+                    {
+                        func += currentTok;
                     }
                 }
                 else if(functionTokens[i].Equals(":="))

@@ -328,10 +328,15 @@ public class TranspilerTests
         {
             "function", "[", "int", "]", "bubble_sort", "(", "[", "int", "]", "to_sort", ")", "{", 
             "for", "(", "int", "i", "=", "1", ";", "i", "<=", "len", "(", "to_sort", ")", "-1", ";", "+", ")", "{",
+            "for", "(", "int", "j", "=", "0", ";", "j", "<=", "len", "(", "to_sort", ")", "-1", ";", "+", ")", "{",
+            "if", "(", "to_sort", "[", "j", "]", ">", "to_sort", "[", "j+1", "]", ")", "{",
+            "int", "temp", "=", "to_sort", "[", "j", "]", ";",
+            "to_sort", "[", "j", "]", "=", "to_sort", "[", "j", "+", "1", "]",";", 
+            "to_sort", "[", "j", "+", "1", "]", "=", "temp", ";", "}", "}", "}",
             "}"
         };
 
-        string outputExpected = "public List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){}";
+        string outputExpected = "public List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){for ( int j = 0 ; j <= to_sort.Count()-1 ; j++){if(to_sort[j] > to_sort[j+1]){int temp = to_sort[j]; to_sort[j] = to_sort[j+1]; to_sort[j+1]=temp;}}}";
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateFunction(tokens);
 
@@ -387,6 +392,21 @@ public class TranspilerTests
         };
 
         string outputExpected = "public void test_func(){Console.WriteLine('Hello World');}";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string ouptutActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    }
+
+    [Fact]
+    public void TranslateAccessToListItem_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "test_func", "(", ")", "{", "ls", "[", "10", "]", ";", "}"
+        };
+
+        string outputExpected = "public void test_func(){ls[10];}";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string ouptutActual = trans.TranslateFunction(tokens);
