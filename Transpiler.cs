@@ -185,12 +185,6 @@ public class Transpiler
     // list[int] = [10, 20];
     public string TranslateListCreation(List<string> tokens)
     {
-        Console.WriteLine("Creating a List");
-        foreach(string tok in tokens)
-        {
-            Console.WriteLine(tok);
-        }
-        Console.WriteLine("#############End of list creation##############");
         string listString = "List<";
         string listName = "";
         bool simplified = false;
@@ -214,7 +208,6 @@ public class Transpiler
         {
             // for performance reaons it is not recommended to just use a list of objects, so it is necessary to evaluate the datatype here
             datatype = GetDatatypeOfToken(tokens[posOfEq+2]);
-            Console.WriteLine(tokens[posOfEq-1]);
             listName = tokens[posOfEq-1];
         }
         else
@@ -367,7 +360,6 @@ public class Transpiler
                     (start, end) = GetStartAndEndOfLine(i, functionTokens);
                     List<string> line = functionTokens.GetRange(start+1, end-start);
                     bool isDeclaration = false;
-                    Console.WriteLine("#####################SOL##################");
                     // if the token after the = equals an [ it is a list declaration otherweise it is access
                     for(int lineIndex = 0; lineIndex < line.Count(); lineIndex++)
                     {
@@ -379,8 +371,6 @@ public class Transpiler
                             }
                         }
                     }
-                    Console.WriteLine("the result is: " + isDeclaration.ToString());
-                    Console.WriteLine("####################EOL#######################");
                     if(isDeclaration)
                     {
                         char eol = GetClosestEndOfLineTokenBefore(i, functionTokens);
@@ -444,7 +434,23 @@ public class Transpiler
             {
                 // TODO: Handle more complex cases
                 func += token;
-
+                if(!functionTokens[i+1].Equals("("))
+                {
+                    functionTokens.Insert(i+1, "(");
+                    bool endOfLine = false;
+                    int tmp = i;
+                    int positionForClosingBracket = 0;
+                    while(!endOfLine)
+                    {
+                        if(functionTokens[tmp] == "{")
+                        {
+                            endOfLine = true;
+                            positionForClosingBracket = tmp;
+                        }
+                        tmp+=1;
+                    }
+                    functionTokens.Insert(positionForClosingBracket, ")");
+                }
             }
             else if(lineEnders.Contains(token[0]))
             {
@@ -460,7 +466,6 @@ public class Transpiler
                 func += token;
             }
         }
-        Console.WriteLine(func);
         return func;
     }
 
@@ -552,7 +557,9 @@ public class Transpiler
             {"*", "*"},
             {";", ";"},
             {"r", "return "},
-            {"=", "="}
+            {"return", "return "},
+            {"=", "="},
+            {"else", "else "}
         };
 
         List<string> complexKeywords = new List<string>{

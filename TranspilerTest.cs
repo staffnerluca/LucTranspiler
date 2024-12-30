@@ -453,13 +453,14 @@ public class TranspilerTests
             "if", "sign", "==", "'+'", "{",
             "r", "first", "+", "second", ";",
             "}",
-            "else", "if", "(", "sign", "==", "-", ")", "{",
+            "else", "if", "(", "sign", "==", "'-'", ")", "{",
             "int", "result", "=", "first", "+", "second", ";",
-            "r", "result", ";",
-            "else", "{", "return", "0", "}"
+            "r", "result", ";", "}",
+            "else", "{", "return", "0", "}",
+            "}"
         };
 
-        string outputExpected = "public int test_func(string sign,int first,int second){if(sign=='+'){r first+second;}else if(sign == '-'){int result = first+second; r result;}else{return 0}}";
+        string outputExpected = "public int test_func(string sign,int first,int second){if(sign=='+'){return first+second;}else if(sign=='-'){int result=first+second;return result;}else {return 0}}";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateFunction(tokens);
