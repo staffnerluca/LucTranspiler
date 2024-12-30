@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using Xunit;
+using Xunit.Sdk;
 
 public class TranspilerTests
 {
@@ -437,6 +438,28 @@ public class TranspilerTests
         };
 
         string outputExpected = "public void test_func(){int test=ls[5]}";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void TranslateSimpleCalculator_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "int", "test_func", "(", "string", "sign", ",", "int", "first", ",", "int", "second", ")", "{",
+            "if", "sign", "==", "'+'", "{",
+            "r", "first", "+", "second", ";",
+            "}",
+            "else", "if", "(", "sign", "==", "-", ")", "{",
+            "int", "result", "=", "first", "+", "second", ";",
+            "r", "result", ";",
+            "else", "{", "return", "0", "}"
+        };
+
+        string outputExpected = "public int test_func(string sign,int first,int second){if(sign=='+'){r first+second;}else if(sign == '-'){int result = first+second; r result;}else{return 0}}";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateFunction(tokens);
