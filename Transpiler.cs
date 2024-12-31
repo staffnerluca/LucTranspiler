@@ -436,7 +436,7 @@ public class Transpiler
             {
                 Console.WriteLine("hello world");
                 // TODO: Handle more complex cases
-                func += currentTok;
+                func += token;
                 if(!functionTokens[i+1].Equals("("))
                 {
                     functionTokens.Insert(i+1, "(");
