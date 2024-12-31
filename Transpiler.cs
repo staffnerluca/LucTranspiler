@@ -325,9 +325,32 @@ public class Transpiler
                 func += TranslateCallOfInherentFunction(functionTokens.GetRange(i, fucntionEndIndex-i));
                 i += fucntionEndIndex - i;
             }
+
             if(token.Equals("__complex__"))
-            {
-                Console.WriteLine(currentTok);
+            {   
+                // TODO find out why this is not handling the if case
+                if(currentTok.Equals("while") || currentTok.Equals("if"))
+                {
+                    func += currentTok;
+                    if(!functionTokens[i+1].Equals("("))
+                    {
+                        functionTokens.Insert(i+1, "(");
+                        bool endOfLine = false;
+                        int tmp = i;
+                        int positionForClosingBracket = 0;
+                        while(!endOfLine)
+                        {
+                            if(functionTokens[tmp] == "{")
+                            {
+                                endOfLine = true;
+                                positionForClosingBracket = tmp;
+                            }
+                            tmp+=1;
+                        }
+                        functionTokens.Insert(positionForClosingBracket, ")");
+                    }
+                }
+                //if(currentTok.Equals("if") || currentTok.Equals("if")){Console.WriteLine("this is while" + currentTok);}
                 if(currentTok.Equals("?"))
                 {
                     bool singleLineErrorHandling = true;
@@ -431,10 +454,9 @@ public class Transpiler
                     functionTokens.RemoveRange(i, pos - i);
                 }
             }
-            // TODO find bug why it does only work with if and not with else if
-            if(currentTok.Equals("if") || currentTok.Equals("while"))
+            else if(currentTok.Equals("if"))
             {
-                Console.WriteLine("hello world");
+                Console.WriteLine("test" + currentTok);
                 // TODO: Handle more complex cases
                 func += token;
                 if(!functionTokens[i+1].Equals("("))
