@@ -478,7 +478,32 @@ public class TranspilerTests
             "}", "}"
         };
 
-        string outputExpected = "public void my_func(){bool notFound=true;while(notFound){Console.WriteLine('hi')}}";
+        string outputExpected = "public void my_func(){bool notFound=true;while(notFound){Console.WriteLine('hi');}}";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void TranslateMultilineTryCatch_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "test_func", "(", ")", "{",
+            "bool", "test", "=", "false", ";",
+            "?", "{",
+            "print", "(", "'Hello World'", ")", ";",
+            "test", "=", "true", ";",
+            "}",
+            "{",
+            "print", "(", "'Error'", ")", ";",
+            "test", "=", "false", ";",
+            "}",
+            "}"
+        };
+
+        string outputExpected = "public void test_func(){bool test=false;try{Console.WriteLine('Hello World');test=true}catch(Exception ex){Console.WriteLine('Error');test=false}}";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateFunction(tokens);
