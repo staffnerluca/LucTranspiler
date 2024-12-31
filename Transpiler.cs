@@ -327,6 +327,7 @@ public class Transpiler
             }
             if(token.Equals("__complex__"))
             {
+                Console.WriteLine(currentTok);
                 if(currentTok.Equals("?"))
                 {
                     bool singleLineErrorHandling = true;
@@ -430,10 +431,12 @@ public class Transpiler
                     functionTokens.RemoveRange(i, pos - i);
                 }
             }
-            else if(currentTok.Equals("if"))
+            // TODO find bug why it does only work with if and not with else if
+            if(currentTok.Equals("if") || currentTok.Equals("while"))
             {
+                Console.WriteLine("hello world");
                 // TODO: Handle more complex cases
-                func += token;
+                func += currentTok;
                 if(!functionTokens[i+1].Equals("("))
                 {
                     functionTokens.Insert(i+1, "(");

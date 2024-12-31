@@ -11,7 +11,6 @@ public class TranspilerTests
     private const string TestFilePath = "testFile.txt"; // Sample test file path
     private const string TestJsonPath = "simplifiedCode.json"; // Sample JSON file path
 
-
     [Fact]
     public void TranslateVarDefintion()
     {
@@ -461,6 +460,25 @@ public class TranspilerTests
         };
 
         string outputExpected = "public int test_func(string sign,int first,int second){if(sign=='+'){return first+second;}else if(sign=='-'){int result=first+second;return result;}else {return 0}}";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void TranslateWhile_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "my_func", "(", ")", "{",
+            "bool", "notFound", "=", "true", ";",
+            "while", "(", "notFound", ")", "{",
+            "print", "(", "'hi'", ")", ";",
+            "}", "}"
+        };
+
+        string outputExpected = "public void my_func(){bool notFound=true;while(notFound){Console.WriteLine('hi')}}";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateFunction(tokens);
