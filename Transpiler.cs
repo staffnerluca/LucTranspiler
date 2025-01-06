@@ -181,6 +181,8 @@ public class Transpiler
 
     // TODO summarize the two functions to one by converting the string input to a char List
     // all tokens until the closing bracket where the according opening one should be found
+
+    // currently not needed, remove?
     public int GetPositionOfOpeningBracket(List<string> tokens)
     {
         int positionOfClosingBracket = tokens.Count() - 1;
@@ -429,10 +431,9 @@ public class Transpiler
                 {
                     if(functionTokens[i-1].Equals("}"))
                     {
-                        int openingBracketPos = GetPositionOfOpeningBracket(functionTokens.GetRange(0, i-1));
-                        func.Insert(openingBracketPos - 1, "try");
-
-                        //need to find the fucking opening bracket in the string not in the tokens i am so stupid :(
+                        int openingBracketPos = GetPositionOfOpeningBracketInString(func);
+                        func = func.Insert(openingBracketPos, "try");
+                        func = func.Insert(func.Length, "catch(Exception __lucInternalException__)");                        
                     }
 
                     else
@@ -451,7 +452,7 @@ public class Transpiler
                             indexLastEolT = 0;
                         }
                         func = func.Insert(indexLastEolT + 1, "try{");
-                        func += "}catch(Exception ex){";
+                        func += "}catch(Exception __lucInternalException__){";
                         simpleTryCatch = true;
                     }
                     //TODO: handle mutli line try catch
@@ -537,7 +538,6 @@ public class Transpiler
             }
             else if(currentTok.Equals("if"))
             {
-                Console.WriteLine("test" + currentTok);
                 // TODO: Handle more complex cases
                 func += token;
                 if(!functionTokens[i+1].Equals("("))

@@ -131,7 +131,7 @@ public class TranspilerTests
             "function", "int", "test", "(", ")", "{","test", ":=", "10", ";", "?", "}"
         };
         Transpiler trans = new Transpiler(TestFilePath);
-        string expected = "public int test(){try{var test=10;}catch(Exception ex){}";
+        string expected = "public int test(){try{var test=10;}catch(Exception __lucInternalException__){}";
         string actual = trans.TranslateFunction(tokens);
         Assert.Equal(expected, actual);
     }
@@ -143,7 +143,7 @@ public class TranspilerTests
             "function", "int", "test", "(", ")", "{","test", ":=", "10", ";", "?", "int", "i", "=", "10", ";", "}"
         };
         Transpiler trans = new Transpiler(TestFilePath);
-        string expected = "public int test(){try{var test=10;}catch(Exception ex){int i=10;}}";
+        string expected = "public int test(){try{var test=10;}catch(Exception __lucInternalException__){int i=10;}}";
         string actual = trans.TranslateFunction(tokens);
         Assert.Equal(expected, actual);
     }
@@ -503,7 +503,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public void test_func(){bool test=false;try{Console.WriteLine('Hello World');test=true}catch(Exception ex){Console.WriteLine('Error');test=false}}";
+        string outputExpected = "public void test_func(){bool test=false;try{Console.WriteLine('Hello World');test=true;}catch(Exception __lucInternalException__){Console.WriteLine('Error');test=false;}}";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateFunction(tokens);
