@@ -568,14 +568,58 @@ public class TranspilerTests
     public void TranslateDictionaryCreationSimplified()
     {
         List<string> tokens = new List<string>(){
-            "my_dic", ":=", "{", "'test'", ":", "10", "}"
+            "my_dic", ":=", "{", "'test'", ":", "10", "}", ";"
         };
 
-        string outputExpected = "Dictionary<string, string> my_dic=new Dictionary<string, string>(){{'test', 10}}";
+        string outputExpected = "Dictionary<string, int> my_dic=new Dictionary<string, int>(){{'test', 10},};";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateDictionaryCreation(tokens);
 
         Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void TranslateDictionaryCreation_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "my_dic", "{", "string", ", ", "int", "}", "=", 
+            "{",
+            "'test'", ":", "10",
+            "}", ";"
+        };
+
+        string outputExpected = "Dictionary<string, int> my_dic=new Dictionary<string, int>(){{'test', 10},};";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string ouptutActual = trans.TranslateDictionaryCreation(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    }
+
+    [Fact]
+    public void TranslateDictionaryCreationWithoutEntries_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "my_dic", "{", "string", ", ", "int", "}", "=", "{", "}", ";"
+        };
+
+        string outputExpected = "Dictionary<string, int> my_dic=new Dictionary<string, int>(){};";
+        Transpiler trans = new Transpiler(TestFilePath);
+        string ouptutActual = trans.TranslateDictionaryCreation(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    }
+
+    [Fact]
+    public void GetDatatypeOfTokenString_Test()
+    {
+        string input = "'test'";
+
+        string outputExpected = "string";
+        Transpiler trans = new Transpiler(TestFilePath);
+        string ouptutActual = trans.GetDatatypeOfToken(input);
+
+        Assert.Equal(outputExpected, outputExpected);
     }
 }

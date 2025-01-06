@@ -110,7 +110,7 @@ public class Transpiler
 
     public string GetDatatypeOfToken(string token)
     {
-        if(token[0].Equals('"') || token[0].Equals("'"))
+        if(token.Contains('"') || token.Contains("'"))
         {
             return "string";
         }
@@ -311,10 +311,11 @@ public class Transpiler
         */
         if(tokens.Contains(":="))
         {
+            Console.WriteLine(GetDatatypeOfToken(tokens[3]));
             string datatypeKeys = GetDatatypeOfToken(tokens[3]);
             string datatypeValues = GetDatatypeOfToken(tokens[5]);
             output += datatypeKeys + ", " + datatypeValues + "> " + tokens[0];
-            output += "= new Dictionary<" + datatypeKeys + ", " + datatypeValues + ">" + "(){";
+            output += "=new Dictionary<" + datatypeKeys + ", " + datatypeValues + ">" + "(){";
             indexOfFirstKey = 3;
         }
         /*
@@ -337,10 +338,11 @@ public class Transpiler
                 stillDictionaryInputs = false;
                 break;
             }
-            output += "{" + tokens[i] + "," + tokens[i+2] + "},";
+            output += "{" + tokens[i] + ", " + tokens[i+2] + "},";
             i += 3;
         }
 
+        output += "};";
         return output;
     }
     
