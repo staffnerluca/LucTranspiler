@@ -302,7 +302,17 @@ public class Transpiler
     public string TranslateDictionaryCreation(List<string> tokens)
     {
         string output = "Dictionary<";
-        int indexOfFirstKey = 0;
+        int indexOfFirstKey = 8;
+
+        /*
+            Example input:
+                my_dic{string, int} = {
+                    "test": 10,
+                }
+        */
+        string datatypeKeys = tokens[2];
+        string datatypeValues = tokens[4];
+        
         /*
             Example input:
                 my_dic := {
@@ -311,23 +321,15 @@ public class Transpiler
         */
         if(tokens.Contains(":="))
         {
-            Console.WriteLine(GetDatatypeOfToken(tokens[3]));
-            string datatypeKeys = GetDatatypeOfToken(tokens[3]);
-            string datatypeValues = GetDatatypeOfToken(tokens[5]);
-            output += datatypeKeys + ", " + datatypeValues + "> " + tokens[0];
-            output += "=new Dictionary<" + datatypeKeys + ", " + datatypeValues + ">" + "(){";
+            datatypeKeys = GetDatatypeOfToken(tokens[3]);
+            datatypeValues = GetDatatypeOfToken(tokens[5]);
+
             indexOfFirstKey = 3;
         }
-        /*
-            Example input:
-                my_dic{string, int} = {
-                    "test": 10,
-                }
-        */
-        else
-        {
-            // handle special case empty dictionary my_dic = {}
-        }
+
+        output += datatypeKeys + ", " + datatypeValues + "> " + tokens[0];
+        output += "=new Dictionary<" + datatypeKeys + ", " + datatypeValues + ">" + "(){";
+
         // currently dictionary of dictionaries not possible!!
         bool stillDictionaryInputs = true;
         int i = indexOfFirstKey;
