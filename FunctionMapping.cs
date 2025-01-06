@@ -11,7 +11,8 @@ public static class FunctionMapping
         {"read_nex_input", new List<string>{"Console.ReadKey", "parameter", "using System"}},
 
         /* String Methods */
-        {"len", new List<string>{"Length", "object", ""}},
+        {"len", new List<string>{"Count", "object", ""}},
+        {"len_of_text", new List<string>{"Length", "object", ""}},
         {"upper", new List<string>{"ToUpper", "object", ""}},
         {"lower", new List<string>{"ToLower", "object", ""}},
         {"substring", new List<string>{"Substring", "object", ""}},
@@ -51,14 +52,13 @@ public static class FunctionMapping
         {"normalilze_values_to_be_between_min_and_max", new List<string>{"Math.Clamp", "parameter", "using System"}},
 
         /* List/Collection Methods */
-        {"len", new List<string>{"Count", "object", "using System.Collections.Generic"}},
+        //{"len", new List<string>{"Count", "object", "using System.Collections.Generic"}},
         {"add_to_list", new List<string>{"Add", "object", "using System.Collections.Generic"}},
         {"remove_from_list", new List<string>{"Remove", "object", "using System.Collections.Generic"}},
         {"remove_at_index", new List<string>{"RemoveAt", "object", "using System.Collections.Generic"}},
         {"clear", new List<string>{"Clear", "object", "using System.Collections.Generic"}},
         {"insert_at_index", new List<string>{"Insert", "object", "using System.Collections.Generic"}},
         {"get_first_index_of", new List<string>{"IndexOf", "object", "using System.Collections.Generic"}},
-        {"contains", new List<string>{"Contains", "object", "using System.Collections.Generic"}},
         {"sort", new List<string>{"Sort", "object", "using System.Collections.Generic"}},
         {"reverse", new List<string>{"Reverse", "object", "using System.Collections.Generic"}},
         {"find", new List<string>{"Find", "object", "using System.Collections.Generic"}},
@@ -66,19 +66,20 @@ public static class FunctionMapping
         {"search", new List<string>{"BinarySearch", "object", "using System.Collections.Generic"}},
 
         /* LINQ Methods */
+        // are kept the same because they are mostly the same as in SQL and or target audience probably knows SQL
         {"select", new List<string>{"Select", "object", "using System.Linq"}},
         {"where", new List<string>{"Where", "object", "using System.Linq"}},
-        {"first", new List<string>{"First", "object", "using System.Linq"}},
+        {"first_value", new List<string>{"First", "object", "using System.Linq"}},
         {"first_or_default", new List<string>{"FirstOrDefault", "object", "using System.Linq"}},
-        {"last", new List<string>{"Last", "object", "using System.Linq"}},
+        {"last_value", new List<string>{"Last", "object", "using System.Linq"}},
         {"last_or_default", new List<string>{"LastOrDefault", "object", "using System.Linq"}},
         {"single", new List<string>{"Single", "object", "using System.Linq"}},
         {"single_or_default", new List<string>{"SingleOrDefault", "object", "using System.Linq"}},
         {"sum", new List<string>{"Sum", "object", "using System.Linq"}},
         {"average", new List<string>{"Average", "object", "using System.Linq"}},
         {"count", new List<string>{"Count", "object", "using System.Linq"}},
-        {"max", new List<string>{"Max", "object", "using System.Linq"}},
-        {"min", new List<string>{"Min", "object", "using System.Linq"}},
+        {"max_of_list", new List<string>{"Max", "object", "using System.Linq"}},
+        {"min_of_list", new List<string>{"Min", "object", "using System.Linq"}},
         {"order_by", new List<string>{"OrderBy", "object", "using System.Linq"}},
         {"order_by_descending", new List<string>{"OrderByDescending", "object", "using System.Linq"}},
         {"group_by", new List<string>{"GroupBy", "object", "using System.Linq"}},

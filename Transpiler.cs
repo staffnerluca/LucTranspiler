@@ -29,17 +29,6 @@ public class Transpiler
         "<", ">", ">=", "<=", "=="
     };
 
-    public Dictionary<string, List<string>> functionMapping = new Dictionary<string, List<string>>()
-    {
-        /* 
-            key: luc name of function, value: C# name of function, 
-            type (parameter if the parameter from luc is kept as parameter || object if the first parameter is the object calling the function for example list.Count()),
-            then what needs to be importet to use the function properly
-        */
-        {"print", new List<string>{"Console.WriteLine", "parameter", "using System"}},
-        {"len", new List<string>{"Count", "object", " using System"}}
-    };
-
     public Transpiler(string filePath)
     {
         filePath = this.filePath;
@@ -49,7 +38,6 @@ public class Transpiler
     {
         return "";
     }
-
 
     #region Helper functions
     public List<string> GetLines()
@@ -318,7 +306,7 @@ public class Transpiler
 
         try
         {
-            List<string> values = functionMapping[tokens[0]];
+            List<string> values = FunctionMapping.DirectMapping[tokens[0]];
             if(values[1].Equals("object"))
             {
                 output += tokens[2] + "." + values[0] + "()";
@@ -395,11 +383,11 @@ public class Transpiler
             string currentTok = functionTokens[i];
             string token = TranslateToken(currentTok);
 
-            if(functionMapping.Keys.Contains(currentTok))
+            if(FunctionMapping.DirectMapping.Keys.Contains(currentTok))
             {
-                int fucntionEndIndex = functionTokens.IndexOf(")", i);
-                func += TranslateCallOfInherentFunction(functionTokens.GetRange(i, fucntionEndIndex-i));
-                i += fucntionEndIndex - i;
+                int functionEndIndex = functionTokens.IndexOf(")", i);
+                func += TranslateCallOfInherentFunction(functionTokens.GetRange(i, functionEndIndex-i));
+                i += functionEndIndex - i;
             }
 
             if(token.Equals("__complex__"))
@@ -676,7 +664,7 @@ public class Transpiler
         {
             return LucToCSharpToken[tok];
         }
-        else if(complexKeywords.Contains(tok) || functionMapping.Keys.Contains(tok))
+        else if(complexKeywords.Contains(tok) || FunctionMapping.DirectMapping.Keys.Contains(tok))
         {
             return "__complex__";
         }
