@@ -563,4 +563,19 @@ public class TranspilerTests
 
         Assert.Equal(outputExpected, outputActual);
     }
+
+    [Fact]
+    public void TranslateDictionaryCreationSimplified()
+    {
+        List<string> tokens = new List<string>(){
+            "my_dic", ":=", "{", "'test'", ":", "10", "}"
+        };
+
+        string outputExpected = "Dictionary<string, string> my_dic=new Dictionary<string, string>(){{'test', 10}}";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateDictionaryCreation(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
 }

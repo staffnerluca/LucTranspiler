@@ -298,6 +298,51 @@ public class Transpiler
         listString += "};";
         return listString;
     }
+
+    public string TranslateDictionaryCreation(List<string> tokens)
+    {
+        string output = "Dictionary<";
+        int indexOfFirstKey = 0;
+        /*
+            Example input:
+                my_dic := {
+                    "test": 10,
+                }
+        */
+        if(tokens.Contains(":="))
+        {
+            string datatypeKeys = GetDatatypeOfToken(tokens[3]);
+            string datatypeValues = GetDatatypeOfToken(tokens[5]);
+            output += datatypeKeys + ", " + datatypeValues + "> " + tokens[0];
+            output += "= new Dictionary<" + datatypeKeys + ", " + datatypeValues + ">" + "(){";
+            indexOfFirstKey = 3;
+        }
+        /*
+            Example input:
+                my_dic{string, int} = {
+                    "test": 10,
+                }
+        */
+        else
+        {
+            // handle special case empty dictionary my_dic = {}
+        }
+        // currently dictionary of dictionaries not possible!!
+        bool stillDictionaryInputs = true;
+        int i = indexOfFirstKey;
+        while(stillDictionaryInputs)
+        {
+            if(tokens[i].Equals("}"))
+            {
+                stillDictionaryInputs = false;
+                break;
+            }
+            output += "{" + tokens[i] + "," + tokens[i+2] + "},";
+            i += 3;
+        }
+
+        return output;
+    }
     
     // example input: len(testList);
     public string TranslateCallOfInherentFunction(List<string> tokens)
