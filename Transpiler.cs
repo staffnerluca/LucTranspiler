@@ -179,7 +179,7 @@ public class Transpiler
         return -1;
     }
 
-
+    // TODO summarize the two functions to one by converting the string input to a char List
     // all tokens until the closing bracket where the according opening one should be found
     public int GetPositionOfOpeningBracket(List<string> tokens)
     {
@@ -217,6 +217,41 @@ public class Transpiler
         }
         return posOfOpeningBracket;
     }
+
+    public int GetPositionOfOpeningBracketInString(string st)
+    {
+        int positionOfOpeningBracket = 0;
+        Dictionary<char, char> closingToOpeningBracket = new Dictionary<char, char>(){
+            {'}', '{'},
+            {')', '('},
+            {']', '['}
+        };
+        char closingBracket = st[st.Length - 1];
+        char openingBracketToLookFor = closingToOpeningBracket[closingBracket];
+
+        int numOfUnrelatedBracketsOfTheSameType = 0;
+        for(int i = st.Length - 2; i > 0; i--)
+        {
+            if(st[i].Equals(openingBracketToLookFor))
+            {
+                if(numOfUnrelatedBracketsOfTheSameType > 0)
+                {
+                    numOfUnrelatedBracketsOfTheSameType -= 1;
+                }
+                else
+                {
+                    positionOfOpeningBracket = i;
+                    break;
+                }
+            }
+            else if(st[i].Equals(closingBracket))
+            {
+                numOfUnrelatedBracketsOfTheSameType += 1;
+            }
+        }
+        return positionOfOpeningBracket;
+    }
+
 
     // sLUC format vor lists:
     // list := ["element", "element"];

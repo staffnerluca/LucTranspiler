@@ -530,4 +530,37 @@ public class TranspilerTests
 
         Assert.Equal(outputExpected, ouptutActual);
     }
+
+    [Fact]
+    public void GetPositionOfOpeningBracketWithIf_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "test_func", "(", ")", "{",
+            "bool", "test", "=", "false", ";",
+            "{",
+            "if", "(", "true", ")", "{",
+            "print", "(", "'Hello World'", ")", ";", "}",
+            "test", "=", "true", ";",
+            "}",
+        };
+
+        int outputExpected = 10;
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        int ouptutActual = trans.GetPositionOfOpeningBracket(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    }
+
+    [Fact]
+    public void GetPositionOfOpeningBracketInString_Test()
+    {
+        string input = "functino test_func(){bool test=false;{if(true){do_stuff();}test=true;}";
+        int outputExpected = 37;
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        int outputActual = trans.GetPositionOfOpeningBracketInString(input);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
 }

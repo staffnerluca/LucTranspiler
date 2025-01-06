@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LucTranspiler")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+36a980dcbb97cb32bf480b7d1a5ec423dbefc9dd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e397381846353908acf947255abdb8b9c50ed8d2")]
 [assembly: System.Reflection.AssemblyProductAttribute("LucTranspiler")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LucTranspiler")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
