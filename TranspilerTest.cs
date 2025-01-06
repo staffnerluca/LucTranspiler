@@ -622,4 +622,69 @@ public class TranspilerTests
 
         Assert.Equal(outputExpected, outputExpected);
     }
+
+    [Fact]
+    public void TranslateMultipleFunctions()
+    {
+        List<string> tokens = new List<string>()
+        {
+            "function", "[", "int", "]", "bubble_sort", "(", "[", "int", "]", "to_sort", ")", "{", 
+            "for", "(", "int", "i", "=", "1", ";", "i", "<=", "len", "(", "to_sort", ")", "-1", ";", "+", ")", "{",
+            "for", "(", "int", "j", "=", "0", ";", "j", "<=", "len", "(", "to_sort", ")", "-1", ";", "+", ")", "{",
+            "if", "(", "to_sort", "[", "j", "]", ">", "to_sort", "[", "j+1", "]", ")", "{",
+            "int", "temp", "=", "to_sort", "[", "j", "]", ";",
+            "to_sort", "[", "j", "]", "=", "to_sort", "[", "j", "+", "1", "]",";", 
+            "to_sort", "[", "j", "+", "1", "]", "=", "temp", ";", "}", "}", "}",
+            "}",
+
+            "function", "int", "test_func", "(", "string", "sign", ",", "int", "first", ",", "int", "second", ")", "{",
+            "if", "sign", "==", "'+'", "{",
+            "r", "first", "+", "second", ";",
+            "}",
+            "else", "if", "(", "sign", "==", "'-'", ")", "{",
+            "int", "result", "=", "first", "+", "second", ";",
+            "r", "result", ";", "}",
+            "else", "{", "return", "0", "}",
+            "}"
+        };
+
+        string outputExpected = "public List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){for ( int j = 0 ; j <= to_sort.Count()-1 ; j++){if(to_sort[j]>to_sort[j+1]){int temp=to_sort[j];to_sort[j]=to_sort[j+1];to_sort[j+1]=temp;}}}} public int test_func(string sign,int first,int second){if(sign=='+'){return first+second;}else if(sign=='-'){int result=first+second;return result;}else {return 0}}";
+        
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.Translate(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void GetFunctionStarts_Test()
+    {
+        List<string> tokens = new List<string>()
+        {
+            "function", "[", "int", "]", "bubble_sort", "(", "[", "int", "]", "to_sort", ")", "{", 
+            "for", "(", "int", "i", "=", "1", ";", "i", "<=", "len", "(", "to_sort", ")", "-1", ";", "+", ")", "{",
+            "for", "(", "int", "j", "=", "0", ";", "j", "<=", "len", "(", "to_sort", ")", "-1", ";", "+", ")", "{",
+            "if", "(", "to_sort", "[", "j", "]", ">", "to_sort", "[", "j+1", "]", ")", "{",
+            "int", "temp", "=", "to_sort", "[", "j", "]", ";",
+            "to_sort", "[", "j", "]", "=", "to_sort", "[", "j", "+", "1", "]",";", 
+            "to_sort", "[", "j", "+", "1", "]", "=", "temp", ";", "}", "}", "}",
+            "}",
+
+            "function", "int", "test_func", "(", "string", "sign", ",", "int", "first", ",", "int", "second", ")", "{",
+            "if", "sign", "==", "'+'", "{",
+            "r", "first", "+", "second", ";",
+            "}",
+            "else", "if", "(", "sign", "==", "'-'", ")", "{",
+            "int", "result", "=", "first", "+", "second", ";",
+            "r", "result", ";", "}",
+            "else", "{", "return", "0", "}",
+            "}"
+        };
+
+        List<int> outputExpected = new List<int>(){0, 94};
+        Transpiler trans = new Transpiler(TestFilePath);
+        List<int> outputActual = trans.GetFunctionStarts(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
 }

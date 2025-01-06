@@ -878,12 +878,37 @@ public class Transpiler
         }
         return "";
     }
+    
+    public List<int> GetFunctionStarts(List<string> tokens)
+    {
+        List<int> starts = new List<int>(){};
+        for(int i = 0; i < tokens.Count() - 1; i++)
+        {
+            if(tokens[i].Equals("function"))
+            {
+                starts.Add(i);
+            }
+        }
+        return starts;
 
+    }
 
     // function to that calles the rest of the translation functions
-    public string Translate()
+    public string Translate(List<string> tokens)
     {
-        return "";
+        List<int> functionStarts = GetFunctionStarts(tokens);
+        string code = "";
+        for(int i = 0; i < functionStarts.Count() - 1; i++)
+        {
+            int start = functionStarts[i];
+            int end = tokens.Count() -1;
+            if(i + 1 < functionStarts.Count() -1)
+            {
+                end = functionStarts[i+1] + 1;
+            }
+            code += TranslateFunction(tokens.GetRange(start, end-start));
+        }
+        return code;
     }
 
 
