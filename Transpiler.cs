@@ -419,7 +419,7 @@ public class Transpiler
 
     // function format in sLUC: function [return_type] name([parameters])
     public string TranslateFunction(List<string> functionTokens)
-    {   
+    {
         string func = "";
         int endOfHead = functionTokens.IndexOf("{", 0);
         func += TranslateFunctionHead(functionTokens.GetRange(0, endOfHead));
@@ -898,15 +898,16 @@ public class Transpiler
     {
         List<int> functionStarts = GetFunctionStarts(tokens);
         string code = "";
-        for(int i = 0; i < functionStarts.Count() - 1; i++)
+        for(int i = 0; i < functionStarts.Count(); i++)
         {
             int start = functionStarts[i];
-            int end = tokens.Count() -1;
-            if(i + 1 < functionStarts.Count() -1)
+            int end = tokens.Count() + 1;
+            if(i + 1 <= functionStarts.Count() -1)
             {
                 end = functionStarts[i+1] + 1;
             }
-            code += TranslateFunction(tokens.GetRange(start, end-start));
+
+            code += TranslateFunction(tokens.GetRange(start, end - start - 1)) + " ";
         }
         return code;
     }
