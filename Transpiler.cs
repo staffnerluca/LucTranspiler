@@ -179,6 +179,45 @@ public class Transpiler
         return -1;
     }
 
+
+    // all tokens until the closing bracket where the according opening one should be found
+    public int GetPositionOfOpeningBracket(List<string> tokens)
+    {
+        int positionOfClosingBracket = tokens.Count() - 1;
+        int posOfOpeningBracket = 0;
+        Dictionary<string, string> closingToOpeningBracket = new Dictionary<string, string>(){
+            {"}", "{"},
+            {")", "("},
+            {"]", "["}
+        };
+
+        string closingBracket = tokens[positionOfClosingBracket];
+        string openingBracketToLookFor = closingToOpeningBracket[closingBracket];
+
+        int numOfUnrelatedBracketsOfTheSameType = 0;
+        for(int i = positionOfClosingBracket - 1; i > 0; i--)
+        {
+            if(tokens[i].Equals(openingBracketToLookFor))
+            {
+                if(numOfUnrelatedBracketsOfTheSameType > 0)
+                {
+                    numOfUnrelatedBracketsOfTheSameType -= 1;
+                }
+                else
+                {
+                    posOfOpeningBracket = i;
+                    break;
+                }
+            }
+
+            else if(tokens[i].Equals(closingBracket))
+            {
+                numOfUnrelatedBracketsOfTheSameType += 1;
+            }
+        }
+        return posOfOpeningBracket;
+    }
+
     // sLUC format vor lists:
     // list := ["element", "element"];
     // or
@@ -353,8 +392,15 @@ public class Transpiler
                 //if(currentTok.Equals("if") || currentTok.Equals("if")){Console.WriteLine("this is while" + currentTok);}
                 if(currentTok.Equals("?"))
                 {
-                    bool singleLineErrorHandling = true;
-                    if(singleLineErrorHandling)
+                    if(functionTokens[i-1].Equals("}"))
+                    {
+                        int openingBracketPos = GetPositionOfOpeningBracket(functionTokens.GetRange(0, i-1));
+                        func.Insert(openingBracketPos - 1, "try");
+
+                        //need to find the fucking opening bracket in the string not in the tokens i am so stupid :(
+                    }
+
+                    else
                     {
                         List<int> eolTokPos = new List<int>(){};
                         int indexLastEolT = -1;

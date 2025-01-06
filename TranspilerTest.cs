@@ -492,10 +492,10 @@ public class TranspilerTests
         List<string> tokens = new List<string>(){
             "function", "test_func", "(", ")", "{",
             "bool", "test", "=", "false", ";",
-            "?", "{",
+            "{",
             "print", "(", "'Hello World'", ")", ";",
             "test", "=", "true", ";",
-            "}",
+            "}", "?",
             "{",
             "print", "(", "'Error'", ")", ";",
             "test", "=", "false", ";",
@@ -509,5 +509,25 @@ public class TranspilerTests
         string outputActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void GetPositionOfOpeningBracketSimple_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "test_func", "(", ")", "{",
+            "bool", "test", "=", "false", ";",
+            "{",
+            "print", "(", "'Hello World'", ")", ";",
+            "test", "=", "true", ";",
+            "}",
+        };
+
+        int outputExpected = 10;
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        int ouptutActual = trans.GetPositionOfOpeningBracket(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
     }
 }
