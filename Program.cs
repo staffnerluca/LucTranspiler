@@ -6,14 +6,13 @@ class Program
 {
     static void Main(string[] args)
     {   
-        /*
         Console.WriteLine("Running the program");
         
         if (args.Length > 0)
         {
             string projectName = args[0];
             string output = "";
-            string parentDirectory = Path.Combine("..", projectName);
+            string parentDirectory = Path.Combine("../../", projectName);
             try
             {
                 WriteCodeToProject(projectName, parentDirectory);
@@ -38,8 +37,9 @@ class Program
 
     public static void WriteCodeToProject(string projectName, string parentDirectory)
     {   
-        Transpiler trans = new Transpiler("test");
-        string project = trans.Transpile();
+        Transpiler trans = new Transpiler("");
+
+        string project = trans.Translate("");
         string programPath = Path.Combine(parentDirectory, "Program.cs");
         File.WriteAllText(programPath, project);
     }
@@ -69,6 +69,5 @@ class Program
             Console.WriteLine("Error: " + error);
         }
         return "error";
-        */
     }
 }

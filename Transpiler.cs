@@ -930,10 +930,7 @@ public class Transpiler
 
             class Program
             {
-                static void bla(string[] args)
-                {
-                    Console.WriteLine(""Hello from the generated thing!"");
-                }
+                
             }";
     }
 }
