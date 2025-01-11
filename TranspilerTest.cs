@@ -450,17 +450,17 @@ public class TranspilerTests
     {
         List<string> tokens = new List<string>(){
             "function", "int", "test_func", "(", "string", "sign", ",", "int", "first", ",", "int", "second", ")", "{",
-            "if", "sign", "==", "'+'", "{",
+            "if", "sign", "==", "\"+\"", "{",
             "r", "first", "+", "second", ";",
             "}",
-            "else", "if", "(", "sign", "==", "'-'", ")", "{",
+            "else", "if", "(", "sign", "==", "\"-\"", ")", "{",
             "int", "result", "=", "first", "+", "second", ";",
             "r", "result", ";", "}",
             "else", "{", "return", "0", "}",
             "}"
         };
 
-        string outputExpected = "public int test_func(string sign,int first,int second){if(sign=='+'){return first+second;}else if(sign=='-'){int result=first+second;return result;}else {return 0}}";
+        string outputExpected = "public int test_func(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(sign=='-'){int result=first+second;return result;}else {return 0}}";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateFunction(tokens);
@@ -716,5 +716,31 @@ public class TranspilerTests
         string ouptutActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, ouptutActual);
+    }
+
+    [Fact]
+    public void removeLastExpressionFromStringWord_Test()
+    {
+        string test = "hallo Welt";
+
+        string outputExpected = "hallo";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.removeLastExpressionFromString(test);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+        [Fact]
+    public void removeLastExpressionFromStringExpression_Test()
+    {
+        string test = "if(12 + 25)";
+
+        string outputExpected = "if";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.removeLastExpressionFromString(test);
+
+        Assert.Equal(outputExpected, outputActual);
     }
 }

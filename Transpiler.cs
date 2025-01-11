@@ -155,6 +155,24 @@ public class Transpiler
         return "object";
     }
 
+    public string removeLastExpressionFromString(string input)
+    {
+        char charToLookFor = ' ';
+        if(input[input.Count() - 1].Equals(')'))
+        {
+            charToLookFor = '(';
+        }
+        int lastSpacePos = input.LastIndexOf(charToLookFor);
+        // If the string has only one or none word
+        if(lastSpacePos == -1)
+        {
+            return string.Empty;
+        }
+
+        return input.Substring(0, lastSpacePos);
+
+    }
+
     public int GetDistanceToClosingBrackets(List<string> tokens, string bracket)
     {
         Dictionary<string, string> bracketMapping = new Dictionary<string, string>{
@@ -421,7 +439,6 @@ public class Transpiler
             output += TranslateToken(tokens[1]); // return value
         }
         string functionName = tokens[nextTok];
-        Console.WriteLine(functionName);
         if(functionName.Equals("Main"))
         {
             string[] words = output.Split(" ");
@@ -612,6 +629,7 @@ public class Transpiler
                     {
                         func += "String.Equals(" + functionTokens[firstPos] + ", " + functionTokens[secondPos] + ")";
                         // TODO: remove last token from string
+                        func = removeLastExpressionFromString(func);
                     }
                     else
                     {
