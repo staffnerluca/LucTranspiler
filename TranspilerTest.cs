@@ -11,7 +11,6 @@ public class TranspilerTests
     private const string TestFilePath = "testFile.txt"; // Sample test file path
     private const string TestJsonPath = "simplifiedCode.json"; // Sample JSON file path
 
-    /*
     [Fact]
     public void TranslateVarDefintion()
     {
@@ -622,7 +621,7 @@ public class TranspilerTests
         string ouptutActual = trans.GetDatatypeOfToken(input);
 
         Assert.Equal(outputExpected, outputExpected);
-    } */
+    }
 
     [Fact]
     public void TranslateMultipleFunctions()
@@ -687,5 +686,17 @@ public class TranspilerTests
         List<int> outputActual = trans.GetFunctionStarts(tokens);
 
         Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void isStringComparision_Test()
+    {
+        string first = "\"test\"";
+        string second = "\"thisTest\"";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        bool output = trans.isStringComparision(first, second);
+
+        Assert.True(output);
     }
 }

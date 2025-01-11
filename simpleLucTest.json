@@ -1,0 +1,7 @@
+{
+    "tokens": [
+        "function", "Main", "(", ")", "{",
+            "print", "(", "\"Hello World\"", ")", ";",
+        "}"
+    ]
+}

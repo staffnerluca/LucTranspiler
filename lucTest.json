@@ -7,6 +7,7 @@
         "int", "temp", "=", "to_sort", "[", "j", "]", ";",
         "to_sort", "[", "j", "]", "=", "to_sort", "[", "j", "+", "1", "]", ";",
         "to_sort", "[", "j", "+", "1", "]", "=", "temp", ";", "}", "}", "}",
+        "return", "to_sort", ";",
         "}",
 
         "function", "int", "Main", "(", "string", "sign", ",", "int", "first", ",", "int", "second", ")", "{",
@@ -16,7 +17,7 @@
         "else", "if", "(", "sign", "==", "'-'", ")", "{",
         "int", "result", "=", "first", "+", "second", ";",
         "r", "result", ";", "}",
-        "else", "{", "return", "0", "}",
+        "else", "{", "return", "0", ";", "}",
         "}"
     ]
 }

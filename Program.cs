@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection.Metadata.Ecma335;
+using System.Text.Json.Nodes;
+using Newtonsoft.Json;
 
 class Program
 {
@@ -37,9 +40,13 @@ class Program
 
     public static void WriteCodeToProject(string projectName, string parentDirectory)
     {   
+        string json = File.ReadAllText("simpleLucTest.json");
+        List<string> data = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(json)
+            .Values
+            .SelectMany(list => list).ToList();
         Transpiler trans = new Transpiler("");
 
-        string project = trans.Translate("");
+        string project = trans.Translate(data);
         string programPath = Path.Combine(parentDirectory, "Program.cs");
         File.WriteAllText(programPath, project);
     }

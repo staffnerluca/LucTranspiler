@@ -34,6 +34,14 @@ public class Transpiler
         filePath = this.filePath;
     }
 
+    public string imports = "using System;";
+
+    /* 
+        needed to determine if .Equal or "==" should be used for a comparison
+        in LUC == is the only comparison operator
+    */
+    public List<string> stringVariables = new List<string>(){};
+
     public string Transpile()
     {
         return "";
@@ -106,6 +114,24 @@ public class Transpiler
             }
         }
         return -1;
+    }
+
+    /* 
+        input: tokenBefore, == tokenAfter
+        only the toknes one position before and after are needed because
+        every part of a expression needs to be a string for it to be a string comparison
+    */
+    public bool isStringComparision(string first, string second)
+    {
+        if(first.Contains("\"") || first.Contains("'") || second.Contains("\"") || second.Contains("'"))
+        {
+            return true;
+        }
+        else if(stringVariables.Contains(first) || stringVariables.Contains(second))
+        {
+            return true;
+        }
+        return false;
     }
 
     public string GetDatatypeOfToken(string token)
@@ -388,12 +414,26 @@ public class Transpiler
         {
             output += "void ";
             output += tokens[1];
+            //nextTok -= 1;
         }
         else
         {
             output += TranslateToken(tokens[1]); // return value
         }
-        output += tokens[nextTok]; // adds name of the function
+        string functionName = tokens[nextTok];
+        Console.WriteLine(functionName);
+        if(functionName.Equals("Main"))
+        {
+            string[] words = output.Split(" ");
+            string o = words[0] + " " + "static ";
+            string result = o;
+            result += string.Join(" ", words, 1, words.Length - 1);
+            output = result;
+        }
+        else
+        {
+            output += functionName; // adds name of the function
+        }
         output += tokens[nextTok+1];
         bool endOfHead = false;
         int currentPos = nextTok+2;
@@ -554,6 +594,10 @@ public class Transpiler
                     List<string> currentLine = GetLineOfToken(i, functionTokens);
                     func += TranslateVarDefinition(currentLine);
                 }*/
+                else if(currentTok.Equals("=="))
+                {
+                    
+                }
                 else if(currentTok.Equals("for"))
                 {
                     bool found = false;
@@ -702,12 +746,12 @@ public class Transpiler
             {"r", "return "},
             {"return", "return "},
             {"=", "="},
-            {"else", "else "}
+            {"else", "else "},
         };
 
         List<string> complexKeywords = new List<string>{
             //"if", 
-            "?", "while", ":=", "[", "for" //"="
+            "?", "while", ":=", "[", "for", "==" //"="
         };
         if(LucToCSharpToken.Keys.Contains(tok))
         {
@@ -897,7 +941,7 @@ public class Transpiler
     public string Translate(List<string> tokens)
     {
         List<int> functionStarts = GetFunctionStarts(tokens);
-        string code = "";
+        string code = imports + "public class Program{";
         for(int i = 0; i < functionStarts.Count(); i++)
         {
             int start = functionStarts[i];
@@ -909,6 +953,7 @@ public class Transpiler
 
             code += TranslateFunction(tokens.GetRange(start, end - start - 1)) + " ";
         }
+        code += "}";
         return code;
     }
 
