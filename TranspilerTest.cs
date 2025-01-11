@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Principal;
 using System.Text.Json;
 using Xunit;
 using Xunit.Sdk;
@@ -698,5 +699,22 @@ public class TranspilerTests
         bool output = trans.isStringComparision(first, second);
 
         Assert.True(output);
+    }
+
+    [Fact]
+    public void TranslateStringComparison_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "test_func", "(", "string", "first", ",", "string", "second", ")", "{",
+            "if", "first", "==", "second", "{", "}",
+            "}"
+        };
+
+        string outputExpected = "public void test_func(string first, string second){if(String.Equals(first, second)){}}";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string ouptutActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
     }
 }

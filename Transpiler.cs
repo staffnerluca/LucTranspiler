@@ -596,7 +596,28 @@ public class Transpiler
                 }*/
                 else if(currentTok.Equals("=="))
                 {
-                    
+                    int firstPos = i - 1;
+                    int secondPos = i + 1;
+                    if(functionTokens[firstPos].Equals(")"))
+                    {
+                        firstPos -= 1;
+                    }
+                    if(functionTokens[secondPos].Equals("("))
+                    {
+                        secondPos += 1;
+                    }
+
+                    // TODO translate comparision of longer expressions
+                    if(isStringComparision(functionTokens[firstPos], functionTokens[secondPos]))
+                    {
+                        func += "String.Equals(" + functionTokens[firstPos] + ", " + functionTokens[secondPos] + ")";
+                        // TODO: remove last token from string
+                    }
+                    else
+                    {
+                        func += "==";
+                    }
+
                 }
                 else if(currentTok.Equals("for"))
                 {
