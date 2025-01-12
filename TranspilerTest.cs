@@ -649,7 +649,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){for ( int j = 0 ; j <= to_sort.Count()-1 ; j++){if(to_sort[j]>to_sort[j+1]){int temp=to_sort[j];to_sort[j]=to_sort[j+1];to_sort[j+1]=temp;}}}} public int test_func(string sign,int first,int second){if(sign=='+'){return first+second;}else if(sign=='-'){int result=first+second;return result;}else {return 0}} ";
+        string outputExpected = "using System;public class Program{public List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){for ( int j = 0 ; j <= to_sort.Count()-1 ; j++){if(to_sort[j]>to_sort[j+1]){int temp=to_sort[j];to_sort[j]=to_sort[j+1];to_sort[j+1]=temp;}}}} public int test_func(string sign,int first,int second){if(sign=='+'){return first+second;}else if(sign=='-'){int result=first+second;return result;}else {return 0}}} ";
         
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.Translate(tokens);
@@ -731,15 +731,43 @@ public class TranspilerTests
         Assert.Equal(outputExpected, outputActual);
     }
 
-        [Fact]
+    [Fact]
     public void removeLastExpressionFromStringExpression_Test()
     {
-        string test = "if(12 + 25)";
+        string test = "if(12+25";
 
-        string outputExpected = "if";
+        string outputExpected = "if(";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.removeLastExpressionFromString(test);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void removeLastExpressionFromStringThatContainsBracket()
+    {
+        string test = "if(test";
+
+        string outputExpected = "if(";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string ouptutActual = trans.removeLastExpressionFromString(test);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    }
+
+    [Fact]
+    public void TranslateFunctonHeadWithStrings_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "test_func", "(", "string", "first", ",", "string", "second", ")", "{"
+        };
+
+        string outputExpected = "public void test_func(string first, string second){";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateFunctionHead(tokens);
 
         Assert.Equal(outputExpected, outputActual);
     }

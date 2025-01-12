@@ -157,19 +157,25 @@ public class Transpiler
 
     public string removeLastExpressionFromString(string input)
     {
-        char charToLookFor = ' ';
-        if(input[input.Count() - 1].Equals(')'))
+        int lastIndexOfEmptySpace = input.LastIndexOf(" ");
+        int lastIndexOfOpeningBracket = input.LastIndexOf("(");
+
+        int pos = -1;
+        if(lastIndexOfEmptySpace > lastIndexOfOpeningBracket)
         {
-            charToLookFor = '(';
+            pos = lastIndexOfEmptySpace;
         }
-        int lastSpacePos = input.LastIndexOf(charToLookFor);
+        else
+        {
+            pos = lastIndexOfOpeningBracket + 1;
+        }
         // If the string has only one or none word
-        if(lastSpacePos == -1)
+        if(pos == -1)
         {
             return string.Empty;
         }
 
-        return input.Substring(0, lastSpacePos);
+        return input.Substring(0, pos);
 
     }
 
@@ -469,8 +475,11 @@ public class Transpiler
                 currentPos += 3;
             }
             output += TranslateToken(tokens[currentPos]);
+            Console.WriteLine(output);
             currentPos += 1;
         }
+
+        Console.WriteLine("######################");
         return output;
     }
 
@@ -630,6 +639,7 @@ public class Transpiler
                         func += "String.Equals(" + functionTokens[firstPos] + ", " + functionTokens[secondPos] + ")";
                         // TODO: remove last token from string
                         func = removeLastExpressionFromString(func);
+                        functionTokens.RemoveAt(i + 1);
                     }
                     else
                     {
