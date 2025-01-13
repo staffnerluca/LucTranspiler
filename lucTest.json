@@ -10,7 +10,7 @@
         "return", "to_sort", ";",
         "}",
 
-        "function", "int", "Main", "(", "string", "sign", ",", "int", "first", ",", "int", "second", ")", "{",
+        "function", "int", "calculate", "(", "string", "sign", ",", "int", "first", ",", "int", "second", ")", "{",
         "if", "sign", "==", "'+'", "{",
         "r", "first", "+", "second", ";",
         "}",
@@ -18,6 +18,10 @@
         "int", "result", "=", "first", "+", "second", ";",
         "r", "result", ";", "}",
         "else", "{", "return", "0", ";", "}",
+        "}",
+
+        "function", "Main", "(", ")", "{",
+        "print", "(", "\"Hello World\"", ")", ";", 
         "}"
     ]
 }

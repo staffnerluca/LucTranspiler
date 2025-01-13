@@ -451,6 +451,7 @@ public class Transpiler
             string result = o;
             result += string.Join(" ", words, 1, words.Length - 1);
             output = result;
+            output += "Main ";
         }
         else
         {
@@ -472,6 +473,10 @@ public class Transpiler
             {
                 output += "List<" + tokens[currentPos + 1] + "> ";
                 currentPos += 3;
+            }
+            if(tokens[currentPos].Equals("string"))
+            {
+                stringVariables.Add(tokens[currentPos + 1]);
             }
             output += TranslateToken(tokens[currentPos]);
             currentPos += 1;
@@ -500,6 +505,13 @@ public class Transpiler
                 int functionEndIndex = functionTokens.IndexOf(")", i);
                 func += TranslateCallOfInherentFunction(functionTokens.GetRange(i, functionEndIndex-i));
                 i += functionEndIndex - i;
+            }
+
+            if(currentTok.Equals("string"))
+            {
+                stringVariables.Add(functionTokens[i+1]);
+                Console.WriteLine("I found a string");
+                foreach(string f in stringVariables){Console.WriteLine(f);}
             }
 
             if(token.Equals("__complex__"))
@@ -955,6 +967,11 @@ public class Transpiler
             {
                 translation += "=";
             }
+        }
+
+        if(GetDatatypeOfToken(tokens[tokens.Count() - 2]).Equals("string"))
+        {
+            stringVariables.Add(tokens[tokens.Count() - 2]);
         }
         return translation; 
     }

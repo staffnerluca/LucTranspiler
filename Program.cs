@@ -40,7 +40,7 @@ class Program
 
     public static void WriteCodeToProject(string projectName, string parentDirectory)
     {   
-        string json = File.ReadAllText("simpleLucTest.json");
+        string json = File.ReadAllText("lucTest.json");
         List<string> data = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(json)
             .Values
             .SelectMany(list => list).ToList();

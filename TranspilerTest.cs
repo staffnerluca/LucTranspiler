@@ -705,17 +705,52 @@ public class TranspilerTests
     public void TranslateStringComparison_Test()
     {
         List<string> tokens = new List<string>(){
-            "function", "test_func", "(", "string", "first", ",", "string", "second", ")", "{",
+            "function", "funci", "(", "string", "first", ")", "{",
+            "string", "second", "=", "\"test\"", ";",
             "if", "(", "first", "==", "second", ")", "{", "}",
             "}"
         };
 
-        string outputExpected = "public void test_func(string first,string second){if(String.Equals(first, second)){}}";
+        string outputExpected = "public void funci(string first){string second=\"test\";if(String.Equals(first, second)){}}";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string ouptutActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, ouptutActual);
+    }
+
+    [Fact]
+    public void TranslateStringDeclaration()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "string", "testStringDec", "(", ")", "{",
+            "string", "t", ":=", "\"my way\"", ";",
+            "}",
+        };
+
+        string outputExpected = "public string testStringDec(){var t=\"my way\";}";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+        [Fact]
+    public void TranslateIntDeclaration()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "int", "testIntDec", "(", ")", "{",
+            "int", "i", "=", "12", ";",
+            "}"
+        };
+
+        string outputExpected = "public int testIntDec(){int i=12;}";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
     }
 
     [Fact]
@@ -770,5 +805,40 @@ public class TranspilerTests
         string outputActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void TranslateMainHead()
+    {
+        List<string> tokens = new List<string>(){
+            "functon", "Main", "(", ")", "{",
+            "print", "(", "\"Hello World\"", ")", ";", 
+            "}"
+        };
+
+        string outputExpected = "public static void Main (){Console.WriteLine(\"Hello World\");}";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string ouptutActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    }
+
+    [Fact]
+    public void TranslateFunctonWithStringComp_Test()
+    {
+        // need to account for special case var declaration
+        List<string> tokens = new List<string>(){
+            "function", "testi", "(", "string", "first", ",", "string", "second", ")", "{", 
+            "test", ":=", "first", "==", "\"test\"", ";",
+            "}"
+        };
+
+        string outputExpected = "public void testi(string first,string second){test:=frist==\"test\";}";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string ouptutActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
     }
 }
