@@ -437,8 +437,7 @@ public class Transpiler
         else if(!datatypes.Contains(tokens[1]))
         {
             output += "void ";
-            output += tokens[1];
-            //nextTok -= 1;
+            nextTok -= 1;
         }
         else
         {
@@ -475,11 +474,9 @@ public class Transpiler
                 currentPos += 3;
             }
             output += TranslateToken(tokens[currentPos]);
-            Console.WriteLine(output);
             currentPos += 1;
         }
 
-        Console.WriteLine("######################");
         return output;
     }
 
@@ -636,9 +633,11 @@ public class Transpiler
                     // TODO translate comparision of longer expressions
                     if(isStringComparision(functionTokens[firstPos], functionTokens[secondPos]))
                     {
+                        Console.WriteLine(func);
+                        func = removeLastExpressionFromString(func);
                         func += "String.Equals(" + functionTokens[firstPos] + ", " + functionTokens[secondPos] + ")";
                         // TODO: remove last token from string
-                        func = removeLastExpressionFromString(func);
+                        Console.WriteLine(func);
                         functionTokens.RemoveAt(i + 1);
                     }
                     else

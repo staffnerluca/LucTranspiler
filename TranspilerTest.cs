@@ -460,7 +460,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public int test_func(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(sign=='-'){int result=first+second;return result;}else {return 0}}";
+        string outputExpected = "public int test_func(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first+second;return result;}else {return 0}}";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateFunction(tokens);
@@ -639,17 +639,17 @@ public class TranspilerTests
             "}",
 
             "function", "int", "test_func", "(", "string", "sign", ",", "int", "first", ",", "int", "second", ")", "{",
-            "if", "sign", "==", "'+'", "{",
+            "if", "sign", "==", "\"+\"", "{",
             "r", "first", "+", "second", ";",
             "}",
-            "else", "if", "(", "sign", "==", "'-'", ")", "{",
+            "else", "if", "(", "sign", "==", "\"-\"", ")", "{",
             "int", "result", "=", "first", "+", "second", ";",
             "r", "result", ";", "}",
             "else", "{", "return", "0", "}",
             "}"
         };
 
-        string outputExpected = "using System;public class Program{public List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){for ( int j = 0 ; j <= to_sort.Count()-1 ; j++){if(to_sort[j]>to_sort[j+1]){int temp=to_sort[j];to_sort[j]=to_sort[j+1];to_sort[j+1]=temp;}}}} public int test_func(string sign,int first,int second){if(sign=='+'){return first+second;}else if(sign=='-'){int result=first+second;return result;}else {return 0}}} ";
+        string outputExpected = "using System;public class Program{public List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){for ( int j = 0 ; j <= to_sort.Count()-1 ; j++){if(to_sort[j]>to_sort[j+1]){int temp=to_sort[j];to_sort[j]=to_sort[j+1];to_sort[j+1]=temp;}}}} public int test_func(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first+second;return result;}else {return 0}} }";
         
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.Translate(tokens);
@@ -706,11 +706,11 @@ public class TranspilerTests
     {
         List<string> tokens = new List<string>(){
             "function", "test_func", "(", "string", "first", ",", "string", "second", ")", "{",
-            "if", "first", "==", "second", "{", "}",
+            "if", "(", "first", "==", "second", ")", "{", "}",
             "}"
         };
 
-        string outputExpected = "public void test_func(string first, string second){if(String.Equals(first, second)){}}";
+        string outputExpected = "public void test_func(string first,string second){if(String.Equals(first, second)){}}";
 
         Transpiler trans = new Transpiler(TestFilePath);
         string ouptutActual = trans.TranslateFunction(tokens);
@@ -761,13 +761,13 @@ public class TranspilerTests
     public void TranslateFunctonHeadWithStrings_Test()
     {
         List<string> tokens = new List<string>(){
-            "function", "test_func", "(", "string", "first", ",", "string", "second", ")", "{"
+            "function", "test_func", "(", "string", "first", ",", "string", "second", ")", "{",
         };
 
-        string outputExpected = "public void test_func(string first, string second){";
+        string outputExpected = "public void test_func(string first,string second){";
 
         Transpiler trans = new Transpiler(TestFilePath);
-        string outputActual = trans.TranslateFunctionHead(tokens);
+        string outputActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
     }
