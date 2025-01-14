@@ -21,7 +21,9 @@
         "}",
 
         "function", "Main", "(", ")", "{",
-        "print", "(", "\"Hello World\"", ")", ";", 
+        "int", "result", "=", "calculate", "(", "\"+\"", ",", "12", ",", "24", ")", ";",
+        "print", "(", "\"Hello World\"", ")", ";",
+        "print", "(", "to_string", "(", "result", ")", ")", ";",
         "}"
     ]
 }

@@ -841,4 +841,38 @@ public class TranspilerTests
 
         Assert.Equal(outputExpected, ouptutActual);
     }
+
+    [Fact]
+    public void TranslateFunctionWithToString_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "a_func_with_to_string", "(", ")", "{",
+            "string", "test", "=", "to_string", "(", "12", ")", ";",
+            "}"
+        };
+        
+        string outputExpected = "public void a_func_with_to_string(){string test=Convert.ToString(12);}";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string ouptutActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    }
+
+    [Fact]
+    public void TranslateMultipleFunctionCallsInOneLine_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "func", "(", ")", "{",
+            "print", "(", "to_string", "(", "12", ")", ")", ";",
+            "}"
+        };
+
+        string outputExpected = "public void func(){Console.WriteLine(Convert.ToString(12)));}";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
 }

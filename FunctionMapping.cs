@@ -113,7 +113,7 @@ public static class FunctionMapping
         {"utc_now", new List<string>{"DateTime.UtcNow", "parameter", "using System"}},
         {"add_days_to_date", new List<string>{"AddDays", "object", ""}},
         {"add_hours_to_date", new List<string>{"AddHours", "object", ""}},
-        {"to_string", new List<string>{"ToString", "object", ""}},
+        {"to_string", new List<string>{"Convert.ToString", "parameter", ""}},
         {"format_date", new List<string>{"DateTime.Parse", "parameter", "using System"}},
         {"try_parse_date", new List<string>{"DateTime.TryParse", "parameter", "using System"}},
         {"get_day_of_week", new List<string>{"DayOfWeek", "object", ""}},
