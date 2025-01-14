@@ -412,9 +412,16 @@ public class Transpiler
             }
             else if(values[1].Equals("parameter"))
             {
+                if(FunctionMapping.DirectMapping.Keys.Contains(tokens[2]))
+                {
+                    int functionEndIndex = tokens.IndexOf(")", 2);
+
+                    List<string> secondFunc = tokens.GetRange(2, functionEndIndex - 2);
+                    output += values[0] + "(" + TranslateCallOfInherentFunction(secondFunc) + ")";
+                }
                 output += values[0] + "(" + tokens[2] + ")";
             }
-            // TODO: add handling parameter
+            // TODO: add handling multiple parameters
         }
         catch(KeyNotFoundException ex)
         {
@@ -503,15 +510,17 @@ public class Transpiler
             if(FunctionMapping.DirectMapping.Keys.Contains(currentTok))
             {
                 int functionEndIndex = functionTokens.IndexOf(")", i);
+                // TODO: translate a function in a function
+                Console.WriteLine(functionEndIndex.ToString());
+                Console.WriteLine(functionTokens[functionEndIndex]);
                 func += TranslateCallOfInherentFunction(functionTokens.GetRange(i, functionEndIndex-i));
+                foreach(string tok in functionTokens){Console.WriteLine(tok);}
                 i += functionEndIndex - i;
             }
 
             if(currentTok.Equals("string"))
             {
                 stringVariables.Add(functionTokens[i+1]);
-                Console.WriteLine("I found a string");
-                foreach(string f in stringVariables){Console.WriteLine(f);}
             }
 
             if(token.Equals("__complex__"))

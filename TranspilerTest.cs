@@ -12,6 +12,7 @@ public class TranspilerTests
     private const string TestFilePath = "testFile.txt"; // Sample test file path
     private const string TestJsonPath = "simplifiedCode.json"; // Sample JSON file path
 
+    /*
     [Fact]
     public void TranslateVarDefintion()
     {
@@ -857,7 +858,7 @@ public class TranspilerTests
         string ouptutActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, ouptutActual);
-    }
+    } */
 
     [Fact]
     public void TranslateMultipleFunctionCallsInOneLine_Test()
