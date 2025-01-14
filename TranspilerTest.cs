@@ -861,7 +861,7 @@ public class TranspilerTests
     } */
 
     [Fact]
-    public void TranslateMultipleFunctionCallsInOneLine_Test()
+    public void TranslateMultipleFunctionCallsInOneLineInTranslateFunction_Test()
     {
         List<string> tokens = new List<string>(){
             "function", "func", "(", ")", "{",
@@ -873,6 +873,21 @@ public class TranspilerTests
 
         Transpiler trans = new Transpiler(TestFilePath);
         string outputActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+        [Fact]
+    public void TranslateMultipleFunctionCallsInOneLine_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "print", "(", "to_string", "(", "12", ")", ")",
+        };
+
+        string outputExpected = "Console.WriteLine(Convert.ToString(12))";
+
+        Transpiler trans = new Transpiler(TestFilePath);
+        string outputActual = trans.TranslateCallOfInherentFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
     }
