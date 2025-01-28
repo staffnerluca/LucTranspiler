@@ -419,7 +419,7 @@ public class Transpiler
                 List<string> values = FunctionMapping.DirectMapping[tokens[i]];
                 if(values[1].Equals("object"))
                 {
-                    output = values[0] + "." + tokens[i] + "(" + output;
+                    output = tokens[i+2] + "." + values[0] + "(" + output;
                 }
                 else if(values[1].Equals("parameter"))
                 {
@@ -437,7 +437,6 @@ public class Transpiler
             }
         }
         foreach(int i in indixesOfInherentFunctions){output += ")";}
-        // print(string_of(12))
 
         return output;
     }
