@@ -6,13 +6,7 @@ using Xunit.Sdk;
 
 public class Transpiler
 {
-    private string? _filePath;
-    public string filePath
-    {
-        get { return _filePath; }
-        set { _filePath = value; }
-    }
-
+    # region Lists
     private List<string> sepearators = new List<string>(){
         " ", "=", "==", ">", "<", "+", "-"
         // need to adjust so that every seperator that is not " " is added to the tokens
@@ -29,11 +23,9 @@ public class Transpiler
     private List<string> comparisonOperators = new List<string>(){
         "<", ">", ">=", "<=", "=="
     };
+    #endregion
 
-    public Transpiler(string filePath)
-    {
-        filePath = this.filePath;
-    }
+    public Transpiler(){}
 
     public string imports = "using System;";
 
@@ -49,26 +41,6 @@ public class Transpiler
     }
 
     #region Helper functions
-    public List<string> GetLines()
-    {
-        List<string> lines = new List<string>(File.ReadAllLines(this.filePath));
-        return lines;
-    }
-
-    public List<string> TokenizeLine(List<string> line)
-    {
-        List<string> tokens = new List<string>() { };
-
-        return tokens;
-    }
-
-    public Dictionary<int, List<string>> ReadSimplifiedCodeToDic()
-    {
-        string simplCode = File.ReadAllText("simplifiedCode.json");
-        var code = JsonSerializer.Deserialize<Dictionary<int, List<string>>>(simplCode);
-        return code;
-    }
-
     public char GetClosestEndOfLineTokenBefore(int pos, List<string> tokens)
     {
         for (int i = 0; i <= pos; i++)
@@ -97,12 +69,6 @@ public class Transpiler
             }
         }
         return ' ';
-    }
-
-    // TODO: write function
-    public bool IsValidVar(string token)
-    {
-        return true;
     }
 
     public int FindMainFunction(Dictionary<int, List<string>> tokens)
@@ -177,7 +143,6 @@ public class Transpiler
         }
 
         return input.Substring(0, pos);
-
     }
 
     public int GetDistanceToClosingBrackets(List<string> tokens, string bracket)
@@ -218,10 +183,6 @@ public class Transpiler
         return -1;
     }
 
-    // TODO summarize the two functions to one by converting the string input to a char List
-    // all tokens until the closing bracket where the according opening one should be found
-
-    // currently not needed, remove?
     public int GetPositionOfOpeningBracket(List<string> tokens)
     {
         int positionOfClosingBracket = tokens.Count() - 1;
@@ -294,7 +255,7 @@ public class Transpiler
     }
 
 
-    // sLUC format vor lists:
+    // LUC format vor lists:
     // list := ["element", "element"];
     // or
     // list[int] = [10, 20];
@@ -381,7 +342,7 @@ public class Transpiler
         output += datatypeKeys + ", " + datatypeValues + "> " + tokens[0];
         output += "=new Dictionary<" + datatypeKeys + ", " + datatypeValues + ">" + "(){";
 
-        // currently dictionary of dictionaries not possible!!
+        // currently it is not possible to create a dictionary of dictionaries
         bool stillDictionaryInputs = true;
         int i = indexOfFirstKey;
         while (stillDictionaryInputs)
@@ -441,37 +402,6 @@ public class Transpiler
         return output;
     }
 
-    /*
-    // example input: len(testList);
-    public string TranslateCallOfInherentFunction(List<string> tokens)
-    {
-        string output = "";
-        try
-        {
-            List<string> values = FunctionMapping.DirectMapping[tokens[0]];
-            if(values[1].Equals("object"))
-            {
-                output += tokens[2] + "." + values[0] + "()";
-            }
-            else if(values[1].Equals("parameter"))
-            {
-                if(FunctionMapping.DirectMapping.Keys.Contains(tokens[2]))
-                {
-                    int functionEndIndex = tokens.IndexOf(")", 2);
-                    List<string> secondFunc = tokens.GetRange(2, functionEndIndex - 2);
-                    output += values[0] + "(" + TranslateCallOfInherentFunction(secondFunc) + ")";
-                }
-                output += values[0] + "(" + tokens[2] + ")";
-            }
-            // TODO: add handling multiple parameters
-        }
-        catch(KeyNotFoundException ex)
-        {
-            return "not_inherent";
-        }
-        return output;
-    } */
-
     // standard case: function int bla(string token){}
     public string TranslateFunctionHead(List<string> tokens)
     {
@@ -504,7 +434,7 @@ public class Transpiler
         }
         else
         {
-            output += functionName; // adds name of the function
+            output += functionName; 
         }
         output += tokens[nextTok + 1];
         bool endOfHead = false;
@@ -534,7 +464,7 @@ public class Transpiler
         return output;
     }
 
-    // function format in sLUC: function [return_type] name([parameters])
+    // function format in LUC: function [return_type] name([parameters])
     public string TranslateFunction(List<string> functionTokens)
     {
         string func = "";
@@ -671,12 +601,7 @@ public class Transpiler
                     // The number of tokens was reduced by a minimum of two and so it needs to decrease by 1
                     //TODO: Account for more complex variable creations
                     i -= 2;
-                }/*
-                else if(currentTok.Equals("="))
-                {
-                    List<string> currentLine = GetLineOfToken(i, functionTokens);
-                    func += TranslateVarDefinition(currentLine);
-                }*/
+                }
                 else if (currentTok.Equals("=="))
                 {
                     int firstPos = i - 1;
@@ -762,37 +687,6 @@ public class Transpiler
         return func;
     }
 
-    // input: line? errorHandling
-    /*
-    {
-        line
-        line
-    }
-    ?
-    {
-        error handling
-        error handling
-    }
-    */
-    //      text, how many tokens to delete before and how many tokens to delete after the ? token
-    /*public (string, List<string>) TranslateTryCatch(List<string> tokens, int posOfQuestionmark)
-    {
-        string tryCatch = "try{";
-        if(tokens[0].Equals("{"))
-        {
-
-        }
-        else
-        {
-            for(int i = 1; i < tokens.Count(); i++)
-            {
-                // Translate the line
-            }
-        }
-
-        return tryCatch;
-    }*/
-
     public List<string> GetLineOfToken(int index, List<string> tokens)
     {
         List<string> currentLine = new List<string>();
@@ -873,8 +767,6 @@ public class Transpiler
         }
     }
 
-    // TODO: translate some more special cases
-    // TODO: translate Function in foreach
     public string TranslateForHead(List<string> forHead)
     {
         if (!forHead[1].Equals("("))
@@ -1067,28 +959,6 @@ public class Transpiler
         }
         code += "}";
         return code;
-    }
-
-
-    public string GenerateCSharpCode()
-    {
-        Dictionary<int, List<string>> simplCode = ReadSimplifiedCodeToDic();
-
-        string mainCode = "";
-        string functionCode = "";
-
-        int mainFunc = FindMainFunction(simplCode);
-
-        // Get Tokens for every function
-
-        // translate the function
-        return @"
-            using System;
-
-            class Program
-            {
-                
-            }";
     }
 }
 #endregion

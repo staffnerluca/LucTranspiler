@@ -9,10 +9,6 @@ using Xunit.Sdk;
 
 public class TranspilerTests
 {
-    private const string TestFilePath = "testFile.txt"; // Sample test file path
-    private const string TestJsonPath = "simplifiedCode.json"; // Sample JSON file path
-
-
     [Fact]
     public void TranslateVarDefintion()
     {
@@ -20,7 +16,7 @@ public class TranspilerTests
         {
             "my_friend", ":=", "10" , ";"
         };
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string actual = trans.TranslateVarDefinition(tokens);
         string expected = "var my_friend=10;";
         Assert.Equal(expected, actual);
@@ -34,7 +30,7 @@ public class TranspilerTests
             "function", "int", "test", "(", ")", "{", "}"
         };
         string expected = "public int test(){}";
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string output = trans.TranslateFunction(input);
 
         Assert.Equal(expected, output); 
@@ -47,7 +43,7 @@ public class TranspilerTests
             "function", "int", "test", "(", ")", "{","int", "test", "=", "10", ";", "}"
         };
         string expected = "public int test(){int test=10;}";
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string output = trans.TranslateFunction(input);
 
         Assert.Equal(expected, output); 
@@ -60,7 +56,7 @@ public class TranspilerTests
             "function", "int", "test", "(", ")", "{","test", ":=", "10", ";", "}"
         };
         string expected = "public int test(){var test=10;}";
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string output = trans.TranslateFunction(input);
 
         Assert.Equal(expected, output); 
@@ -75,7 +71,7 @@ public class TranspilerTests
             { 0, new List<string> { "main_func" } },
             { 1, new List<string> { "function" } }
         };
-        var transpiler = new Transpiler(TestFilePath);
+        var transpiler = new Transpiler();
 
         // Act
         var result = transpiler.FindMainFunction(tokens);
@@ -91,7 +87,7 @@ public class TranspilerTests
             "test", ":=", "10", ";"
         };
         string expected = "var test=10;";
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string output = trans.TranslateVarDefinition(input);
 
         Assert.Equal(expected, output); 
@@ -104,7 +100,7 @@ public class TranspilerTests
             "function", "int", "test", "(", ")", "{", "do_something_cool", "(", ")", ";", "int", "test", "=", "10", ";", "lorem", "ipsum", "=", "il", "dolor", ";", "}"
         };
         int inputIndex = 12;
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         List<string> output = trans.GetLineOfToken(inputIndex, input);
         List<string> expected = new List<string>(){
             "int", "test", "=", "10", ";"
@@ -121,7 +117,7 @@ public class TranspilerTests
             "awesome", "{", "end", "the", "line"
         };
         char expected = '{';
-        Transpiler t = new Transpiler(TestFilePath);
+        Transpiler t = new Transpiler();
         char actual = t.GetClosestEndOfLineTokenBefore(2, tokens);
         Assert.Equal(expected, actual);
     }
@@ -132,7 +128,7 @@ public class TranspilerTests
         List<string> tokens = new List<string>(){
             "function", "int", "test", "(", ")", "{","test", ":=", "10", ";", "?", "}"
         };
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string expected = "public int test(){try{var test=10;}catch(Exception __lucInternalException__){}";
         string actual = trans.TranslateFunction(tokens);
         Assert.Equal(expected, actual);
@@ -144,7 +140,7 @@ public class TranspilerTests
         List<string> tokens = new List<string>(){
             "function", "int", "test", "(", ")", "{","test", ":=", "10", ";", "?", "int", "i", "=", "10", ";", "}"
         };
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string expected = "public int test(){try{var test=10;}catch(Exception __lucInternalException__){int i=10;}}";
         string actual = trans.TranslateFunction(tokens);
         Assert.Equal(expected, actual);
@@ -157,7 +153,7 @@ public class TranspilerTests
             "testList", ":=", "[", "10", "20", "30", "]", ";"
         };
         string expected = "List<int> testList= new List<int>(){10, 20, 30};";
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string actual = trans.TranslateListCreation(tokens);
         Assert.Equal(expected, actual);
     }
@@ -169,7 +165,7 @@ public class TranspilerTests
             "testList", "[", "int", "]", "=", "[", "10", "20", "30", "]", ";"
         };
         string expected = "List<int> testList= new List<int>(){10, 20, 30};";
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string actual = trans.TranslateListCreation(tokens);
         Assert.Equal(expected, actual);
     }
@@ -181,7 +177,7 @@ public class TranspilerTests
              "function", "int", "test", "(", ")", "{", "testList", "[", "int", "]", "=", "[", "10", "20", "30", "]", ";", "}"
         };
         string expected = "public int test(){List<int> testList= new List<int>(){10, 20, 30};}";
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string actual = trans.TranslateFunction(tokens);
         Assert.True(actual == expected, actual);
         //Assert.Equal(expected, actual);
@@ -195,7 +191,7 @@ public class TranspilerTests
         };
         int expectedStart = 6;
         int expectedEnd = 16;
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         int actualStart = 0;
         int actualEnd = 0;
         (actualStart, actualEnd) = trans.GetStartAndEndOfLine(8, tokens); 
@@ -211,7 +207,7 @@ public class TranspilerTests
 
         string outputExpected = "foreach(var __lucIntern__ in list)";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateForHead(input);
         Assert.Equal(outputExpected, outputActual);
     }
@@ -226,7 +222,7 @@ public class TranspilerTests
 
         string outputExpected = "foreach(string word in words )";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateForHead(input);
         Assert.Equal(outputExpected, outputActual);
     }
@@ -240,7 +236,7 @@ public class TranspilerTests
 
         string outputExpected = "for(int i=0;i<20;i++)";
         
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateForHead(input);
         Assert.Equal(outputExpected, outputActual);
     }
@@ -254,7 +250,7 @@ public class TranspilerTests
 
         string outputExpected = "for ( int i = 20 ; i > 10 ; i--)";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateForHead(input);
         Assert.Equal(outputExpected, outputActual);
     }
@@ -272,7 +268,7 @@ public class TranspilerTests
         };
         string outputExpected = "public int testFunc(string word){List<int> testList= new List<int>(){10, 20, 30};foreach(var __lucIntern__ in testList){Console.WriteLine('Hello World');}return 10;}";
 
-        Transpiler tok = new Transpiler(TestFilePath);
+        Transpiler tok = new Transpiler();
         string outputActual = tok.TranslateFunction(tokens);
         Assert.Equal(outputExpected, outputActual);
     }
@@ -286,7 +282,7 @@ public class TranspilerTests
         };
 
         string outputExpected = "public List<int> bubble_sort(List<int> to_sort)";
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunctionHead(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -302,7 +298,7 @@ public class TranspilerTests
 
         string outputExpected = "Console.WriteLine('Hello World')";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateCallOfInherentFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -317,7 +313,7 @@ public class TranspilerTests
 
         string outputExpected = "testList.Count()";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateCallOfInherentFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -339,7 +335,7 @@ public class TranspilerTests
         };
 
         string outputExpected = "public List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){for ( int j = 0 ; j <= to_sort.Count()-1 ; j++){if(to_sort[j]>to_sort[j+1]){int temp=to_sort[j];to_sort[j]=to_sort[j+1];to_sort[j+1]=temp;}}}}";
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -354,7 +350,7 @@ public class TranspilerTests
 
         string outputExpected = "Console.WriteLine('Hello World')";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateCallOfInherentFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -369,7 +365,7 @@ public class TranspilerTests
 
         string outputExpected = "my_list.Count()";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateCallOfInherentFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -380,7 +376,7 @@ public class TranspilerTests
     {
         string tok = "print";
         string outputExpected = "__complex__";
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateToken(tok);
         
         Assert.Equal(outputExpected, outputActual);
@@ -395,7 +391,7 @@ public class TranspilerTests
 
         string outputExpected = "public void test_func(){Console.WriteLine('Hello World');}";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string ouptutActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, ouptutActual);
@@ -410,7 +406,7 @@ public class TranspilerTests
 
         string outputExpected = "public void test_func(){ls[10];}";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string ouptutActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, ouptutActual);
@@ -425,7 +421,7 @@ public class TranspilerTests
 
         string outputExpected = "public void test_func(){if(ls[5]){}}";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -440,7 +436,7 @@ public class TranspilerTests
 
         string outputExpected = "public void test_func(){int test=ls[5]}";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -463,7 +459,7 @@ public class TranspilerTests
 
         string outputExpected = "public int test_func(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first+second;return result;}else {return 0}}";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -482,7 +478,7 @@ public class TranspilerTests
 
         string outputExpected = "public void my_func(){bool notFound=true;while(notFound){Console.WriteLine('hi');}}";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -507,7 +503,7 @@ public class TranspilerTests
 
         string outputExpected = "public void test_func(){bool test=false;try{Console.WriteLine('Hello World');test=true;}catch(Exception __lucInternalException__){Console.WriteLine('Error');test=false;}}";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -527,7 +523,7 @@ public class TranspilerTests
 
         int outputExpected = 10;
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         int ouptutActual = trans.GetPositionOfOpeningBracket(tokens);
 
         Assert.Equal(outputExpected, ouptutActual);
@@ -548,7 +544,7 @@ public class TranspilerTests
 
         int outputExpected = 10;
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         int ouptutActual = trans.GetPositionOfOpeningBracket(tokens);
 
         Assert.Equal(outputExpected, ouptutActual);
@@ -560,7 +556,7 @@ public class TranspilerTests
         string input = "functino test_func(){bool test=false;{if(true){do_stuff();}test=true;}";
         int outputExpected = 37;
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         int outputActual = trans.GetPositionOfOpeningBracketInString(input);
 
         Assert.Equal(outputExpected, outputActual);
@@ -575,7 +571,7 @@ public class TranspilerTests
 
         string outputExpected = "Dictionary<string, int> my_dic=new Dictionary<string, int>(){{'test', 10},};";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateDictionaryCreation(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -593,7 +589,7 @@ public class TranspilerTests
 
         string outputExpected = "Dictionary<string, int> my_dic=new Dictionary<string, int>(){{'test', 10},};";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string ouptutActual = trans.TranslateDictionaryCreation(tokens);
 
         Assert.Equal(outputExpected, ouptutActual);
@@ -607,7 +603,7 @@ public class TranspilerTests
         };
 
         string outputExpected = "Dictionary<string, int> my_dic=new Dictionary<string, int>(){};";
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string ouptutActual = trans.TranslateDictionaryCreation(tokens);
 
         Assert.Equal(outputExpected, ouptutActual);
@@ -619,7 +615,7 @@ public class TranspilerTests
         string input = "'test'";
 
         string outputExpected = "string";
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string ouptutActual = trans.GetDatatypeOfToken(input);
 
         Assert.Equal(outputExpected, outputExpected);
@@ -652,7 +648,7 @@ public class TranspilerTests
 
         string outputExpected = "using System;public class Program{public List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){for ( int j = 0 ; j <= to_sort.Count()-1 ; j++){if(to_sort[j]>to_sort[j+1]){int temp=to_sort[j];to_sort[j]=to_sort[j+1];to_sort[j+1]=temp;}}}} public int test_func(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first+second;return result;}else {return 0}} }";
         
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.Translate(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -684,7 +680,7 @@ public class TranspilerTests
         };
 
         List<int> outputExpected = new List<int>(){0, 94};
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         List<int> outputActual = trans.GetFunctionStarts(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -696,7 +692,7 @@ public class TranspilerTests
         string first = "\"test\"";
         string second = "\"thisTest\"";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         bool output = trans.isStringComparision(first, second);
 
         Assert.True(output);
@@ -714,7 +710,7 @@ public class TranspilerTests
 
         string outputExpected = "public void funci(string first){string second=\"test\";if(String.Equals(first, second)){}}";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string ouptutActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, ouptutActual);
@@ -731,7 +727,7 @@ public class TranspilerTests
 
         string outputExpected = "public string testStringDec(){var t=\"my way\";}";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -748,7 +744,7 @@ public class TranspilerTests
 
         string outputExpected = "public int testIntDec(){int i=12;}";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -761,7 +757,7 @@ public class TranspilerTests
 
         string outputExpected = "hallo";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.removeLastExpressionFromString(test);
 
         Assert.Equal(outputExpected, outputActual);
@@ -774,7 +770,7 @@ public class TranspilerTests
 
         string outputExpected = "if(";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.removeLastExpressionFromString(test);
 
         Assert.Equal(outputExpected, outputActual);
@@ -787,7 +783,7 @@ public class TranspilerTests
 
         string outputExpected = "if(";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string ouptutActual = trans.removeLastExpressionFromString(test);
 
         Assert.Equal(outputExpected, ouptutActual);
@@ -802,7 +798,7 @@ public class TranspilerTests
 
         string outputExpected = "public void test_func(string first,string second){";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
@@ -819,7 +815,7 @@ public class TranspilerTests
 
         string outputExpected = "public static void Main (){Console.WriteLine(\"Hello World\");}";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string ouptutActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, ouptutActual);
@@ -855,7 +851,7 @@ public class TranspilerTests
         
         string outputExpected = "public void a_func_with_to_string(){string test=Convert.ToString(12);}";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string ouptutActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, ouptutActual);
@@ -872,13 +868,13 @@ public class TranspilerTests
 
         string outputExpected = "public void func(){Console.WriteLine(Convert.ToString(12)));}";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
     }
 
-        [Fact]
+    [Fact]
     public void TranslateMultipleFunctionCallsInOneLine_Test()
     {
         List<string> tokens = new List<string>(){
@@ -887,9 +883,21 @@ public class TranspilerTests
 
         string outputExpected = "Console.WriteLine(Convert.ToString(12))";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateCallOfInherentFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void TranslateInhernetFunctionCallInForeach_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "func", "(", ")", "{",
+                "for", "i", "<", "20", "{",
+                    "print", "(", "\"Hello\"", ")", ";",
+                "}",
+            "}"
+        };
     }
 }

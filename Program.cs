@@ -44,7 +44,7 @@ class Program
         List<string> data = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(json)
             .Values
             .SelectMany(list => list).ToList();
-        Transpiler trans = new Transpiler("");
+        Transpiler trans = new Transpiler();
 
         string project = trans.Translate(data);
         string programPath = Path.Combine(parentDirectory, "Program.cs");
