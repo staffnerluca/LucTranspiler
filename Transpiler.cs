@@ -941,7 +941,7 @@ public class Transpiler
 
     }
 
-    // function to that calles the rest of the translation functions
+    // function that calles the rest of the translation functions
     public string Translate(List<string> tokens)
     {
         List<int> functionStarts = GetFunctionStarts(tokens);

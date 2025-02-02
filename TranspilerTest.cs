@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Text.Json;
 using Xunit;
@@ -832,9 +833,9 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public void testi(string first,string second){var test=first.Equals\"test\";}";
+        string outputExpected = "public void testi(string first,string second){var test=first.Equals(\"test\");}";
 
-        Transpiler trans = new Transpiler(TestFilePath);
+        Transpiler trans = new Transpiler();
         string ouptutActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, ouptutActual);
@@ -899,5 +900,74 @@ public class TranspilerTests
                 "}",
             "}"
         };
+    }
+
+    [Fact]
+    public void FullCalculator_Test()
+    {
+        List<string> tokens = new List<string>()
+        {
+            "function", "int", "simple_calc", "(", "string", "sign", ",", "int", "first", ",", "int", "second", ")", "{",
+                "if", "sign", "==", "\"+\"", "{",
+                    "r", "first", "+", "second", ";",
+                "}",
+                "else", "if", "(", "sign", "==", "\"-\"", ")", "{",
+                    "int", "result", "=", "first", "-", "second", ";",
+                    "r", "result", ";",
+                "}",
+                "else", "{",
+                    "return", "0", ";",
+                "}",
+            "}",
+
+            "function", "Main", "(", ")", "{",
+                "resPlus", ":=", "simple_calc", "(", "\"+\"", ",", "10", ",", "20", ")", ";",
+                "print", "(", "to_string", "(", "resPlus", ")", ")", ";",
+
+                "resMinus", ":=", "simple_calc", "(", "\"-\"", ",", "5", ",", "2", ")", ";",
+                "print", "(", "to_string", "(", "resMinus", ")", ")", ";",
+                "print", "(", "\"Done\"", ")", ";",
+            "}"
+        };
+        string outputExpected = "using System;public class Program{public int simple_calc(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first-second;return result;}else {return 0;}} public static void Main (){var resPlus=simple_calc(\"+\",10,20);Console.WriteLine(Convert.ToString(resPlus));var resMinus=simple_calc(\"-\",5,2);Console.WriteLine(Convert.ToString(resMinus));Console.WriteLine(\"Done\");} }";
+
+        Transpiler trans = new Transpiler();
+        string ouptutActual = trans.Translate(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    }
+
+    [Fact]
+    public void VarInToString_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "test", "(", "string", "hello", ")", "{",
+            "print", "(", "", "(", "hello", ")", ")", ";",
+            "}"
+        };
+
+        string outputExpected = "public void test(string hello){Console.WriteLine(Convert.ToString(hello));}";
+
+        Transpiler trans = new Transpiler();
+        string ouptutActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    }
+
+    [Fact]
+    public void TranslateToString_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "test", "(", "string", "hello", ")", "{",
+                "to_string", "(", "hello", ")", ";",
+            "}"
+        };
+
+        string outputExpected = "public void test(string hello){Convert.ToString(hello);}";
+
+        Transpiler trans = new Transpiler();
+        string ouptutActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
     }
 }
