@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/staffnerluca/Dokumente/LucTranspiler/LucTranspiler.csproj": {}
+    "/home/staffnerluca/Dokumente/Luc/LucTranspiler/LucTranspiler.csproj": {}
   },
   "projects": {
-    "/home/staffnerluca/Dokumente/LucTranspiler/LucTranspiler.csproj": {
+    "/home/staffnerluca/Dokumente/Luc/LucTranspiler/LucTranspiler.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/staffnerluca/Dokumente/LucTranspiler/LucTranspiler.csproj",
+        "projectUniqueName": "/home/staffnerluca/Dokumente/Luc/LucTranspiler/LucTranspiler.csproj",
         "projectName": "LucTranspiler",
-        "projectPath": "/home/staffnerluca/Dokumente/LucTranspiler/LucTranspiler.csproj",
+        "projectPath": "/home/staffnerluca/Dokumente/Luc/LucTranspiler/LucTranspiler.csproj",
         "packagesPath": "/home/staffnerluca/.nuget/packages/",
-        "outputPath": "/home/staffnerluca/Dokumente/LucTranspiler/obj/",
+        "outputPath": "/home/staffnerluca/Dokumente/Luc/LucTranspiler/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/staffnerluca/.nuget/NuGet/NuGet.Config"

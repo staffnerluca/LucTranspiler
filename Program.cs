@@ -40,10 +40,9 @@ class Program
 
     public static void WriteCodeToProject(string projectName, string parentDirectory)
     {   
-        string json = File.ReadAllText("lucTest.json");
-        List<string> data = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(json)
-            .Values
-            .SelectMany(list => list).ToList();
+        Console.WriteLine("starting the Transpiler");
+        string json = File.ReadAllText("Tokens.json");
+        List<string> data = JsonConvert.DeserializeObject<List<string>>(json);
         Transpiler trans = new Transpiler();
 
         string project = trans.Translate(data);

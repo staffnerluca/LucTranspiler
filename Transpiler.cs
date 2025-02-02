@@ -397,10 +397,14 @@ public class Transpiler
                 return "not_inherent";
             }
         }
-        Console.WriteLine(tokens[0]);
-        //foreach(int i in indixesOfInherentFunctions){Console.WriteLine(i.ToString()); output += ")";}
-        output += ")";
-
+        if(indixesOfInherentFunctions.Count() == 0)
+        {
+            output += ")";
+        }
+        else
+        {
+            foreach(int i in indixesOfInherentFunctions){Console.WriteLine(i.ToString()); output += ")";}
+        }
 
         return output;
     }
@@ -479,6 +483,7 @@ public class Transpiler
 
         for (int i = 0; i < functionTokens.Count(); i++)
         {
+            Console.WriteLine(func);
             string currentTok = functionTokens[i];
             string token = TranslateToken(currentTok);
 
@@ -486,8 +491,17 @@ public class Transpiler
             {
                 int functionEndIndex = functionTokens.IndexOf(")", i);
                 // TODO: translate a function that is given as an agrumgent to a function
-                func += TranslateCallOfInherentFunction(functionTokens.GetRange(i, functionEndIndex - i));
-                i += functionEndIndex - i;
+                List<string> functionRangeTokens = functionTokens.GetRange(i, functionEndIndex - i);
+                func += TranslateCallOfInherentFunction(functionRangeTokens);
+                int numFuncs = 0;
+                foreach(string t in functionRangeTokens)
+                {
+                    if(FunctionMapping.DirectMapping.Keys.Contains(t))
+                    {
+                        numFuncs += 1;
+                    }
+                }
+                i += functionEndIndex - i - 1 + numFuncs;
             }
 
             if (currentTok.Equals("string"))
@@ -597,11 +611,12 @@ public class Transpiler
                 }
                 else if (functionTokens[i].Equals(":="))
                 {
-                    int indexOfClosestSemicolon = functionTokens.IndexOf(";", i);
-                    List<string> tokensForVar = functionTokens.GetRange(i - 1, indexOfClosestSemicolon - 1);
+                    int indexOfClosestSemicolon = functionTokens.IndexOf(";", i) + 1;
+                    List<string> tokensForVar = functionTokens.GetRange(i - 1, indexOfClosestSemicolon - i);
                     func = func.Substring(0, func.LastIndexOf(GetClosestEndOfLineTokenBefore(i, functionTokens)) + 1);
                     func += TranslateVarDefinition(tokensForVar);
-                    functionTokens.RemoveRange(i - 1, indexOfClosestSemicolon - 1);
+                    functionTokens.RemoveRange(i - 1, indexOfClosestSemicolon -i-1);
+                    
                     // The number of tokens was reduced by a minimum of two and so it needs to decrease by 1
                     //TODO: Account for more complex variable creations
                     i -= 2;
@@ -911,9 +926,19 @@ public class Transpiler
                 if(FunctionMapping.DirectMapping.Keys.Contains(token))
                 {   
                     int functionEndIndex = tokens.IndexOf(")", i);
-
-                    translation += TranslateCallOfInherentFunction(tokens.GetRange(i, functionEndIndex - i + 1));
-                    i += functionEndIndex - 1;
+                    Console.WriteLine("#####################");
+                    Console.WriteLine(i.ToString());
+                    Console.WriteLine(functionEndIndex.ToString());
+                    List<string> functionToks = tokens.GetRange(i, functionEndIndex - i);
+                    foreach(string tok in functionToks)
+                    {
+                        Console.WriteLine(tok);
+                    }
+                    translation += TranslateCallOfInherentFunction(functionToks);
+                    //translation = translation.Remove(translation.Length -1);
+                    Console.WriteLine(token);
+                    //TODO maybe change
+                    i += functionEndIndex -1;
                 }
                 else
                 {

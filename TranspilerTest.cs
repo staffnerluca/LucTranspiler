@@ -10,6 +10,7 @@ using Xunit.Sdk;
 
 public class TranspilerTests
 {
+    
     [Fact]
     public void TranslateVarDefintion()
     {
@@ -620,7 +621,7 @@ public class TranspilerTests
         string ouptutActual = trans.GetDatatypeOfToken(input);
 
         Assert.Equal(outputExpected, outputExpected);
-    }
+    } 
 
     [Fact]
     public void TranslateMultipleFunctions()
@@ -890,33 +891,87 @@ public class TranspilerTests
     {
         List<string> tokens = new List<string>()
         {
-            "function", "int", "simple_calc", "(", "string", "sign", ",", "int", "first", ",", "int", "second", ")", "{",
-                "if", "sign", "==", "\"+\"", "{",
-                    "r", "first", "+", "second", ";",
-                "}",
-                "else", "if", "(", "sign", "==", "\"-\"", ")", "{",
-                    "int", "result", "=", "first", "-", "second", ";",
-                    "r", "result", ";",
-                "}",
-                "else", "{",
-                    "return", "0", ";",
-                "}",
+            "function", "int", "simple_calc", "(", "string", "sign,", "int", "first,", "int", "second", ")","{",
+            "if", "sign", "==", "\u0022\u002B\u0022", 
+            "{", "r", "first","+", "second", ";","}",
+            "else", "if", "(", "sign", "==", "\u0022-\u0022", ")",
+            "{",
+            "int", "result", "=", "first", "-", "second", ";",
+            "r", "result", ";",
+            "}",
+            "else","{",
+            "return","0", ";",
+            "}",
             "}",
 
-            "function", "Main", "(", ")", "{",
-                "resPlus", ":=", "simple_calc", "(", "\"+\"", ",", "10", ",", "20", ")", ";",
-                "string", "resPlusString", "=", "to_string", "(", "resPlus", ")", ";", 
-                "print",  "(", "resPlusString", ")", ";",
+            "function", "Main","(",")",
+            "{",
+            "resPlus", ":=", "simple_calc", "(", "\u0022+\u0022", ",", "10,", "20", ")", ";",
+            "resPlusString", ":=", "to_string", "(", "resPlus",")", ";",
+            "print","(","resPlus",")",";",
+            "int", "resMinus", "=", "simple_calc","(", "\u0022-\u0022",",", "5,","2", ")", ";",
+            "string", "resMinus", "=", "to_string", "(", "resMinus", ")", ";",
+            "print","(","resMinus",")",";",
+            "print","(","\u0022Done\u0022", ")",";",
             "}"
         };
-        string outputExpected = "using System;public class Program{public int simple_calc(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first-second;return result;}else {return 0;}} public static void Main (){var resPlus=simple_calc(\"+\",10,20);string resPlusString=Convert.ToString(resPlus);Console.WriteLine(resPlusString);} }";
+        string outputExpected = "using System;public class Program{public int simple_calc(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first-second;return result;}else {return 0;}} public static void Main (){var resPlus=simple_calc(\"+\",10,20);var resPlusString=Convert.ToString(resPlus);Console.WriteLine(resPlusString);} }";
 
         Transpiler trans = new Transpiler();
         string ouptutActual = trans.Translate(tokens);
 
         Assert.Equal(outputExpected, ouptutActual);
     }
+    
+    [Fact]
+    public void VarDefinitionWithFunctionCall_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "resPlusString", ":=", "to_string", "(", "resPlus",")",
+        };
 
+        string outputExpected = "var resPlusString=Convert.ToString(resPlus)";
+        
+        Transpiler trans = new Transpiler();
+        string outputActual = trans.TranslateVarDefinition(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void VarDefintionWithFunctionCallWithPrintBefore_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "funi", "(", ")", "{",
+                "print","(","resPlus",")",";",
+                "test", ":=", "simple_calc","(", "\"-\"",",", "5,","2", ")", ";",
+            "}"
+        };
+
+        string outputExpected = "public void funi(){Console.WriteLine(resPlus);var resMinus=simple_calc(\"-\",5, 2);}";
+
+        Transpiler trans = new Transpiler();
+        string outputActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+    
+    [Fact]
+    public void VarDefintionWithFunctionCall_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "resMinus", ":=", "simple_calc","(", "\u0022-\u0022",",", "5,","2", ")", ";",
+        };
+
+        string outputExpected = "var resMinus=simple_calc(\"-\",5,2);";
+
+        Transpiler trans = new Transpiler();
+        string outputActual = trans.TranslateVarDefinition(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+    
     [Fact]
     public void VarInToString_Test()
     {
