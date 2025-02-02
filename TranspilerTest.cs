@@ -944,11 +944,11 @@ public class TranspilerTests
         List<string> tokens = new List<string>(){
             "function", "funi", "(", ")", "{",
                 "print","(","resPlus",")",";",
-                "test", ":=", "simple_calc","(", "\"-\"",",", "5,","2", ")", ";",
+                "resMinus", ":=", "simple_calc","(", "\"-\"",",", "5,","2", ")", ";",
             "}"
         };
 
-        string outputExpected = "public void funi(){Console.WriteLine(resPlus);var resMinus=simple_calc(\"-\",5, 2);}";
+        string outputExpected = "public void funi(){Console.WriteLine(resPlus);var resMinus=simple_calc(\"-\",5,2);}";
 
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
