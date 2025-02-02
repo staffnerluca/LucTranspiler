@@ -397,7 +397,10 @@ public class Transpiler
                 return "not_inherent";
             }
         }
-        foreach(int i in indixesOfInherentFunctions){output += ")";}
+        Console.WriteLine(tokens[0]);
+        //foreach(int i in indixesOfInherentFunctions){Console.WriteLine(i.ToString()); output += ")";}
+        output += ")";
+
 
         return output;
     }
@@ -482,7 +485,7 @@ public class Transpiler
             if (FunctionMapping.DirectMapping.Keys.Contains(currentTok))
             {
                 int functionEndIndex = functionTokens.IndexOf(")", i);
-                // TODO: translate a function in a function
+                // TODO: translate a function that is given as an agrumgent to a function
                 func += TranslateCallOfInherentFunction(functionTokens.GetRange(i, functionEndIndex - i));
                 i += functionEndIndex - i;
             }
@@ -594,10 +597,11 @@ public class Transpiler
                 }
                 else if (functionTokens[i].Equals(":="))
                 {
-                    List<string> tokensForVar = functionTokens.GetRange(i - 1, i + 1);
+                    int indexOfClosestSemicolon = functionTokens.IndexOf(";", i);
+                    List<string> tokensForVar = functionTokens.GetRange(i - 1, indexOfClosestSemicolon - 1);
                     func = func.Substring(0, func.LastIndexOf(GetClosestEndOfLineTokenBefore(i, functionTokens)) + 1);
                     func += TranslateVarDefinition(tokensForVar);
-                    functionTokens.RemoveRange(i - 1, i + 1);
+                    functionTokens.RemoveRange(i - 1, indexOfClosestSemicolon - 1);
                     // The number of tokens was reduced by a minimum of two and so it needs to decrease by 1
                     //TODO: Account for more complex variable creations
                     i -= 2;
@@ -684,6 +688,7 @@ public class Transpiler
                 func += token;
             }
         }
+        Console.WriteLine(func);
         return func;
     }
 
@@ -895,12 +900,25 @@ public class Transpiler
             The var keyword can be used because datatypes in C# are assigned during compilation and not during the run time.
             So it doesn't impact the performance negatively and it doesn't matter if the C# compiler does the translation or it is done in this code.
         */
+        Console.WriteLine("#############################");
+        foreach(string tok in tokens){Console.WriteLine(tok);}
         string translation = "var ";
-        foreach (string token in tokens)
+        for (int i = 0; i < tokens.Count(); i++)
         {
+            string token = tokens[i];
             if (!token.Equals(":="))
             {
-                translation += TranslateToken(token);
+                if(FunctionMapping.DirectMapping.Keys.Contains(token))
+                {   
+                    int functionEndIndex = tokens.IndexOf(")", i);
+
+                    translation += TranslateCallOfInherentFunction(tokens.GetRange(i, functionEndIndex - i + 1));
+                    i += functionEndIndex - 1;
+                }
+                else
+                {
+                    translation += TranslateToken(token);
+                }
             }
             else
             {

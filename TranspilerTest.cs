@@ -822,25 +822,6 @@ public class TranspilerTests
         Assert.Equal(outputExpected, ouptutActual);
     }
 
-    /* Delete if not fixed
-    [Fact]
-    public void TranslateFunctonWithStringComp_Test()
-    {
-        // need to account for special case var declaration
-        List<string> tokens = new List<string>(){
-            "function", "testi", "(", "string", "first", ",", "string", "second", ")", "{", 
-            "test", ":=", "first", "==", "\"test\"", ";",
-            "}"
-        };
-
-        string outputExpected = "public void testi(string first,string second){var test=first.Equals(\"test\");}";
-
-        Transpiler trans = new Transpiler();
-        string ouptutActual = trans.TranslateFunction(tokens);
-
-        Assert.Equal(outputExpected, ouptutActual);
-    } */
-
     [Fact]
     public void TranslateFunctionWithToString_Test()
     {
@@ -867,7 +848,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public void func(){Console.WriteLine(Convert.ToString(12)));}";
+        string outputExpected = "public void func(){Console.WriteLine(Convert.ToString(12));}";
 
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
@@ -879,13 +860,15 @@ public class TranspilerTests
     public void TranslateMultipleFunctionCallsInOneLine_Test()
     {
         List<string> tokens = new List<string>(){
-            "print", "(", "to_string", "(", "12", ")", ")",
+            "function", "test", "(", ")", "{",
+            "print", "(", "to_string", "(", "12", ")", ")", ";",
+            "}"
         };
 
-        string outputExpected = "Console.WriteLine(Convert.ToString(12))";
+        string outputExpected = "public void test(){Console.WriteLine(Convert.ToString(12));}";
 
         Transpiler trans = new Transpiler();
-        string outputActual = trans.TranslateCallOfInherentFunction(tokens);
+        string outputActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
     }
@@ -922,14 +905,11 @@ public class TranspilerTests
 
             "function", "Main", "(", ")", "{",
                 "resPlus", ":=", "simple_calc", "(", "\"+\"", ",", "10", ",", "20", ")", ";",
-                "print", "(", "to_string", "(", "resPlus", ")", ")", ";",
-
-                "resMinus", ":=", "simple_calc", "(", "\"-\"", ",", "5", ",", "2", ")", ";",
-                "print", "(", "to_string", "(", "resMinus", ")", ")", ";",
-                "print", "(", "\"Done\"", ")", ";",
+                "string", "resPlusString", "=", "to_string", "(", "resPlus", ")", ";", 
+                "print",  "(", "resPlusString", ")", ";",
             "}"
         };
-        string outputExpected = "using System;public class Program{public int simple_calc(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first-second;return result;}else {return 0;}} public static void Main (){var resPlus=simple_calc(\"+\",10,20);Console.WriteLine(Convert.ToString(resPlus));var resMinus=simple_calc(\"-\",5,2);Console.WriteLine(Convert.ToString(resMinus));Console.WriteLine(\"Done\");} }";
+        string outputExpected = "using System;public class Program{public int simple_calc(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first-second;return result;}else {return 0;}} public static void Main (){var resPlus=simple_calc(\"+\",10,20);string resPlusString=Convert.ToString(resPlus);Console.WriteLine(resPlusString);} }";
 
         Transpiler trans = new Transpiler();
         string ouptutActual = trans.Translate(tokens);
@@ -942,7 +922,7 @@ public class TranspilerTests
     {
         List<string> tokens = new List<string>(){
             "function", "test", "(", "string", "hello", ")", "{",
-            "print", "(", "", "(", "hello", ")", ")", ";",
+            "print", "(", "to_string", "(", "hello", ")", ")", ";",
             "}"
         };
 
@@ -970,4 +950,57 @@ public class TranspilerTests
 
         Assert.Equal(outputExpected, ouptutActual);
     }
+
+    [Fact]
+    public void TranslateToStringInSimplifiedVarDeclaration()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "test", "(", ")", "{",
+              "resPlusString",":=","to_string","(","resPlus",")",";",
+            "}"
+        };
+
+        string outputExpected = "public void test(){var resPlusString=Convert.ToString(resPlus);}";
+
+        Transpiler trans = new Transpiler();
+        string outputActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void TranslatePrintWithToString()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "test", "(", ")", "{",
+            "print", "(", "to_string", "(", "inti", ")", ")", ";",
+            "}"
+        };
+
+        string outputExpected = "public void test(){Console.WriteLine(Convert.ToString(inti));}";
+
+        Transpiler trans = new Transpiler();
+        string ouptutActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    }
+
+    /* Delete if not fixed
+    [Fact]
+    public void TranslateFunctonWithStringComp_Test()
+    {
+        // need to account for special case var declaration
+        List<string> tokens = new List<string>(){
+            "function", "testi", "(", "string", "first", ",", "string", "second", ")", "{", 
+            "test", ":=", "first", "==", "\"test\"", ";",
+            "}"
+        };
+
+        string outputExpected = "public void testi(string first,string second){var test=first.Equals(\"test\");}";
+
+        Transpiler trans = new Transpiler();
+        string ouptutActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    } */
 }
