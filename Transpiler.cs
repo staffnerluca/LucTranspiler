@@ -615,11 +615,11 @@ public class Transpiler
                     List<string> tokensForVar = functionTokens.GetRange(i - 1, indexOfClosestSemicolon - i);
                     func = func.Substring(0, func.LastIndexOf(GetClosestEndOfLineTokenBefore(i, functionTokens)) + 1);
                     func += TranslateVarDefinition(tokensForVar);
-                    functionTokens.RemoveRange(i - 1, indexOfClosestSemicolon -i-1);
+                    functionTokens.RemoveRange(i - 1, indexOfClosestSemicolon-i-1);
                     
                     // The number of tokens was reduced by a minimum of two and so it needs to decrease by 1
                     //TODO: Account for more complex variable creations
-                    i -= 2;
+                    i -= 1;
                 }
                 else if (currentTok.Equals("=="))
                 {
