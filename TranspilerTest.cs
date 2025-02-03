@@ -10,7 +10,6 @@ using Xunit.Sdk;
 
 public class TranspilerTests
 {
-    
     [Fact]
     public void TranslateVarDefintion()
     {
@@ -57,7 +56,7 @@ public class TranspilerTests
         List<string> input = new List<string>(){
             "function", "int", "test", "(", ")", "{","test", ":=", "10", ";", "}"
         };
-        string expected = "public int test(){var test=10;}";
+        string expected = "public static int test(){var test=10;}";
         Transpiler trans = new Transpiler();
         string output = trans.TranslateFunction(input);
 
@@ -164,9 +163,9 @@ public class TranspilerTests
     public void TranslateListCreationWithTypeDeclaration_Test()
     {
         List<string> tokens = new List<string>(){
-            "testList", "[", "int", "]", "=", "[", "10", "20", "30", "]", ";"
+            "testList", "[", "int", "]", "=", "[", "10", ",", "20", ",", "30", "]", ";"
         };
-        string expected = "List<int> testList= new List<int>(){10, 20, 30};";
+        string expected = "List<int> testList= new List<int>(){10,20,30};";
         Transpiler trans = new Transpiler();
         string actual = trans.TranslateListCreation(tokens);
         Assert.Equal(expected, actual);
@@ -176,15 +175,14 @@ public class TranspilerTests
     public void TranslateFucntionWithListDeclaration_Test()
     {
         List<string> tokens = new List<string>(){
-             "function", "int", "test", "(", ")", "{", "testList", "[", "int", "]", "=", "[", "10", "20", "30", "]", ";", "}"
+             "function", "int", "test", "(", ")", "{", "testList", "[", "int", "]", "=", "[", "10",",", "20",",", "30", "]", ";", "}"
         };
-        string expected = "public static int test(){List<int> testList= new List<int>(){10, 20, 30};}";
+        string expected = "public static int test(){List<int> testList= new List<int>(){10,20,30};}";
         Transpiler trans = new Transpiler();
         string actual = trans.TranslateFunction(tokens);
-        Assert.True(actual == expected, actual);
-        //Assert.Equal(expected, actual);
+        Assert.Equal(expected, actual);
     }
-
+    
     [Fact]
     public void GetStartAndEndOfLine_Test()
     {
@@ -262,13 +260,13 @@ public class TranspilerTests
     {
         List<string> tokens = new List<string>(){
             "function", "int", "testFunc", "(", "string", "word", ")", "{", 
-            "testList", "[", "int", "]", "=", "[", "10", "20", "30", "]", ";",
+            "testList", "[", "int", "]", "=", "[", "10", ",", "20", ",", "30", "]", ";",
             "for", "(", "testList", ")", "{",
             "print", "(", "'Hello World'", ")", ";", "}",
             "r", "10", ";",
             "}"
         };
-        string outputExpected = "public static int testFunc(string word){List<int> testList= new List<int>(){10, 20, 30};foreach(var __lucIntern__ in testList){Console.WriteLine('Hello World');}return 10;}";
+        string outputExpected = "public static int testFunc(string word){List<int> testList= new List<int>(){10,20,30};foreach(var __lucIntern__ in testList){Console.WriteLine('Hello World');}return 10;}";
 
         Transpiler tok = new Transpiler();
         string outputActual = tok.TranslateFunction(tokens);
@@ -648,7 +646,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "using System;public class Program{public static List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){for ( int j = 0 ; j <= to_sort.Count()-1 ; j++){if(to_sort[j]>to_sort[j+1]){int temp=to_sort[j];to_sort[j]=to_sort[j+1];to_sort[j+1]=temp;}}}} public int test_func(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first+second;return result;}else {return 0}} }";
+        string outputExpected = "using System;public class Program{public static List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){for ( int j = 0 ; j <= to_sort.Count()-1 ; j++){if(to_sort[j]>to_sort[j+1]){int temp=to_sort[j];to_sort[j]=to_sort[j+1];to_sort[j+1]=temp;}}}} public static int test_func(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first+second;return result;}else {return 0}} }";
         
         Transpiler trans = new Transpiler();
         string outputActual = trans.Translate(tokens);
@@ -822,6 +820,7 @@ public class TranspilerTests
 
         Assert.Equal(outputExpected, ouptutActual);
     }
+
 
     [Fact]
     public void TranslateFunctionWithToString_Test()

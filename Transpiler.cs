@@ -295,7 +295,7 @@ public class Transpiler
         List<string> elements = new List<string> { };
         for (int i = tokens.Count - 3; i > 0; i--)
         {
-            if (tokens[i].Equals("["))
+            if (tokens[i].Equals("[") || tokens[i].Equals("]") || tokens[i].Equals(";"))
             {
                 break;
             }
@@ -305,8 +305,9 @@ public class Transpiler
         {
             listString += element; //+ ", ";
         }
+        Console.WriteLine("END OF ELEMENTS" + listString);
         // remove last ","
-        listString = listString.Substring(0, listString.Count() - 1);
+        //listString = listString.Substring(0, listString.Count() - 1);
         listString += "};";
         return listString;
     }
@@ -403,7 +404,7 @@ public class Transpiler
         }
         else
         {
-            foreach(int i in indixesOfInherentFunctions){Console.WriteLine(i.ToString()); output += ")";}
+            foreach(int i in indixesOfInherentFunctions){output += ")";}
         }
 
         return output;
@@ -484,7 +485,6 @@ public class Transpiler
 
         for (int i = 0; i < functionTokens.Count(); i++)
         {
-            Console.WriteLine(func);
             string currentTok = functionTokens[i];
             string token = TranslateToken(currentTok);
 
@@ -590,6 +590,9 @@ public class Transpiler
                         char eol = GetClosestEndOfLineTokenBefore(i, functionTokens);
                         int eolIndex = func.LastIndexOf(eol);
                         func = func.Substring(0, eolIndex + 1);
+                        Console.WriteLine("#############Line for List Creation#############");
+                        foreach(string tok in line){Console.WriteLine(tok);}
+                        Console.WriteLine("#############END#############");
 
                         func += TranslateListCreation(line);
                         for (int j = i - 3; j < functionTokens.Count(); j++)
@@ -601,6 +604,7 @@ public class Transpiler
                             else
                             {
                                 functionTokens.RemoveAt(j);
+                                i+=1;
                                 break;
                             }
                         }
@@ -703,8 +707,8 @@ public class Transpiler
             {
                 func += token;
             }
+            Console.WriteLine(func);
         }
-        Console.WriteLine(func);
         return func;
     }
 
@@ -916,8 +920,6 @@ public class Transpiler
             The var keyword can be used because datatypes in C# are assigned during compilation and not during the run time.
             So it doesn't impact the performance negatively and it doesn't matter if the C# compiler does the translation or it is done in this code.
         */
-        Console.WriteLine("#############################");
-        foreach(string tok in tokens){Console.WriteLine(tok);}
         string translation = "var ";
         for (int i = 0; i < tokens.Count(); i++)
         {
@@ -927,14 +929,7 @@ public class Transpiler
                 if(FunctionMapping.DirectMapping.Keys.Contains(token))
                 {   
                     int functionEndIndex = tokens.IndexOf(")", i);
-                    Console.WriteLine("#####################");
-                    Console.WriteLine(i.ToString());
-                    Console.WriteLine(functionEndIndex.ToString());
                     List<string> functionToks = tokens.GetRange(i, functionEndIndex - i);
-                    foreach(string tok in functionToks)
-                    {
-                        Console.WriteLine(tok);
-                    }
                     translation += TranslateCallOfInherentFunction(functionToks);
                     //translation = translation.Remove(translation.Length -1);
                     Console.WriteLine(token);
