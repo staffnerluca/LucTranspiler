@@ -23,6 +23,18 @@ public class TranspilerTests
         Assert.Equal(expected, actual);
     }
 
+    [Fact]
+    public void removeLastWordFromString_Test()
+    {
+        string input = "public static void Main(){Console.WriteLine(\"Hello World\");bla";
+
+        string outputExpected = "public static void Main(){Console.WriteLine(\"Hello World\");";
+
+        Transpiler trans = new Transpiler();
+        string outputActual = trans.removeLastWordFromString(input);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
 
     [Fact]
     public void TranslateSimpleFunction_Test()
@@ -183,6 +195,26 @@ public class TranspilerTests
         Assert.Equal(expected, actual);
     }
     
+
+    [Fact]
+    public void ListCreationAndFunctionCallCallAfter_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function","Main","(",")",
+            "{",
+                "print", "(", "test", ")", ";",
+                "ls","[","int","]","=","[","10", ",","20",",","30","]",";",
+                "print","(","\u0022Done\u0022",")",";",
+            "}"
+        };
+
+        string outputExpected = "public static void Main(){List<int> ls= new List<int>(){10,20,30};}";
+        Transpiler trans = new Transpiler();
+        string outputActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
     [Fact]
     public void GetStartAndEndOfLine_Test()
     {
@@ -271,6 +303,20 @@ public class TranspilerTests
         Transpiler tok = new Transpiler();
         string outputActual = tok.TranslateFunction(tokens);
         Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void SimpleListCreation()
+    {
+        List<string> tokens = new List<string>(){
+            "testList","[", "int", "]", "=", "[", "10", ",", "20", ",", "30", "]", ";"
+        };
+
+        string outputExpected = "List<int> testList= new List<int>(){10,20,30};";
+        Transpiler trans = new Transpiler();
+        string ouptutActual = trans.TranslateListCreation(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
     }
 
     [Fact]
@@ -1043,7 +1089,7 @@ public class TranspilerTests
     {
         List<string> tokens = new List<string>(){
             "function", "Main", "(", ")", "{",
-            "nums", "[", "int", "]", "=", "[", "10", ",", "40", ",", "5", ",", "20", "]", ";",
+            "nums", "[", "int", "]", "=", "[", "10", ",", "40", ",", "5", ",", "20","]", ";",
             "}"
         };
 
@@ -1053,6 +1099,19 @@ public class TranspilerTests
         string outputActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void DoesListGenerationWork()
+    {
+        List<string> tokens = new List<string>()
+        {
+            "nums", "[", "int", "]", "=", "[", "10", ",", "40", ",", "5", ",", "20","]",
+        };
+        string outputExpected = "List<int> nums= new List<int>(){10,40,5,20};";
+        Transpiler trans = new Transpiler();
+        string ouptutActual = trans.TranslateListCreation(tokens);
+        Assert.Equal(outputExpected, ouptutActual);
     }
 
     /* Delete if not fixed

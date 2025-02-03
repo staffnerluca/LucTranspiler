@@ -56,6 +56,25 @@ public class Transpiler
         return ' ';
     }
 
+    public string removeLastWordFromString(string inp)
+    {
+        int lineEnderIndex = -1;
+
+        foreach(char ender in lineEnders)
+        {
+            int i = inp.LastIndexOf(ender);
+            if(i != -1 && i > lineEnderIndex)
+            {
+                lineEnderIndex = i;
+            }
+        }
+        if(lineEnderIndex == -1){return inp;}
+        else
+        {
+            return inp.Substring(0, lineEnderIndex + 1);
+        }
+    }
+
     public char GetClosestEndOfLineTokenAfter(int pos, List<string> tokens)
     {
         for (int i = 0; i <= tokens.Count() - pos; i++)
@@ -293,7 +312,9 @@ public class Transpiler
         }
         listString += datatype + "> " + listName + "= new List<" + datatype + ">(){";
         List<string> elements = new List<string> { };
-        for (int i = tokens.Count - 3; i > 0; i--)
+
+        // TODO FIX THISSSSSSS!!!!!!!!!!
+        for (int i = tokens.Count - 2; i > 0; i--)
         {
             if (tokens[i].Equals("[") || tokens[i].Equals("]") || tokens[i].Equals(";"))
             {
@@ -565,54 +586,7 @@ public class Transpiler
                     }
                     //TODO: handle mutli line try catch
                 }
-                // example list creation: my_list := [1, 2, 4] or [int] my_list = [1, 2, 4]
-                //                                2. condition to prevent it from getting procesed by the declaration of the datatype when creating a list
-                else if (currentTok.Equals("[") && !datatypes.Contains(functionTokens[i + 1]))
-                {
-                    int start = 0;
-                    int end = 0;
-                    (start, end) = GetStartAndEndOfLine(i, functionTokens);
-                    List<string> line = functionTokens.GetRange(start + 1, end - start);
-                    bool isDeclaration = false;
-                    // if the token after the = equals an [ it is a list declaration otherweise it is access
-                    for (int lineIndex = 0; lineIndex < line.Count(); lineIndex++)
-                    {
-                        if (line[lineIndex].Equals("[") && lineIndex > 0)
-                        {
-                            if (line[lineIndex - 1].Equals("=") || line[lineIndex - 1].Equals(":="))
-                            {
-                                isDeclaration = true;
-                            }
-                        }
-                    }
-                    if (isDeclaration)
-                    {
-                        char eol = GetClosestEndOfLineTokenBefore(i, functionTokens);
-                        int eolIndex = func.LastIndexOf(eol);
-                        func = func.Substring(0, eolIndex + 1);
-                        Console.WriteLine("#############Line for List Creation#############");
-                        foreach(string tok in line){Console.WriteLine(tok);}
-                        Console.WriteLine("#############END#############");
 
-                        func += TranslateListCreation(line);
-                        for (int j = i - 3; j < functionTokens.Count(); j++)
-                        {
-                            functionTokens.RemoveAt(j);
-                            if (lineEnders.Contains(functionTokens[j][0]))
-                            {
-                                break;
-                            }
-                        }
-                        //skip line ender and ]
-                        i += 2;
-                        Console.WriteLine("#####Token at i#######");
-                        Console.WriteLine(functionTokens[i]);
-                    }
-                    else
-                    {
-                        func += currentTok;
-                    }
-                }
                 else if (functionTokens[i].Equals(":="))
                 {
                     int indexOfClosestSemicolon = functionTokens.IndexOf(";", i) + 1;
@@ -624,6 +598,27 @@ public class Transpiler
                     // The number of tokens was reduced by a minimum of two and so it needs to decrease by 1
                     //TODO: Account for more complex variable creations
                     i -= 1;
+                }
+                // example list creation: my_list := [1, 2, 4] or my_list[int] = [1, 2, 4]
+                else if (currentTok.Equals("["))
+                {
+                    // case list creation
+                    if(datatypes.Contains(functionTokens[i+1]))
+                    {
+                        int lineEnderIndex = functionTokens.IndexOf(";", i);
+                        List<string> tokensForListCreation = functionTokens.GetRange(i-1, lineEnderIndex);
+                        Console.WriteLine("#####my_test"); 
+                        Console.WriteLine(func);
+                        foreach(string t in tokensForListCreation){Console.WriteLine(t);}
+                        func = removeLastWordFromString(func);
+                        func += TranslateListCreation(tokensForListCreation);
+                        Console.WriteLine(func);
+                    }
+                    // case list access
+                    else
+                    {
+                        func += "[";
+                    }
                 }
                 else if (currentTok.Equals("=="))
                 {
