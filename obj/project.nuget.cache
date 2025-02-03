@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "nxsqZGPdPljMj4PelYduHu1ZEl08NHzg8c4OecEzNat6g2YnWQ+jfsnVPDJm3itHfqcMWwaRg2h2MD/2x/llHg==",
+  "dgSpecHash": "4578fy0efeOJC4vdR22oaUC8ya58n7QqUDbgRjD3XDCODj1QL96xOCfm5y7P2CGstTcagReOhGkC3+MlFjcadQ==",
   "success": true,
-  "projectFilePath": "/home/staffnerluca/Dokumente/Luc/LucTranspiler/LucTranspiler.csproj",
+  "projectFilePath": "/home/staffnerluca/LucTranspiler/LucTranspiler.csproj",
   "expectedPackageFiles": [
     "/home/staffnerluca/.nuget/packages/microsoft.codecoverage/17.11.1/microsoft.codecoverage.17.11.1.nupkg.sha512",
     "/home/staffnerluca/.nuget/packages/microsoft.net.test.sdk/17.11.1/microsoft.net.test.sdk.17.11.1.nupkg.sha512",

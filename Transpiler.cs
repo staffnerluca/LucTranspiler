@@ -597,17 +597,16 @@ public class Transpiler
                         func += TranslateListCreation(line);
                         for (int j = i - 3; j < functionTokens.Count(); j++)
                         {
-                            if (!lineEnders.Contains(functionTokens[j][0]))
+                            functionTokens.RemoveAt(j);
+                            if (lineEnders.Contains(functionTokens[j][0]))
                             {
-                                functionTokens.RemoveAt(j);
-                            }
-                            else
-                            {
-                                functionTokens.RemoveAt(j);
-                                i+=1;
                                 break;
                             }
                         }
+                        //skip line ender and ]
+                        i += 2;
+                        Console.WriteLine("#####Token at i#######");
+                        Console.WriteLine(functionTokens[i]);
                     }
                     else
                     {

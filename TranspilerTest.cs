@@ -9,7 +9,7 @@ using Xunit;
 using Xunit.Sdk;
 
 public class TranspilerTests
-{
+{   
     [Fact]
     public void TranslateVarDefintion()
     {
@@ -151,9 +151,9 @@ public class TranspilerTests
     public void TranslateListCreationWithoutTypeDeclared_Test()
     {
          List<string> tokens = new List<string>(){
-            "testList", ":=", "[", "10", ",", "20", ",", "30", "]", ";"
+            "testList", ":=", "[", "40", ",", "20", ",", "30", "]", ";"
         };
-        string expected = "List<int> testList= new List<int>(){10,20,30};";
+        string expected = "List<int> testList= new List<int>(){40,20,30};";
         Transpiler trans = new Transpiler();
         string actual = trans.TranslateListCreation(tokens);
         Assert.Equal(expected, actual);
@@ -163,21 +163,21 @@ public class TranspilerTests
     public void TranslateListCreationWithTypeDeclaration_Test()
     {
         List<string> tokens = new List<string>(){
-            "testList", "[", "int", "]", "=", "[", "10", ",", "20", ",", "30", "]", ";"
+            "testList", "[", "int", "]", "=", "[", "15", ",", "20", ",", "30", "]", ";"
         };
-        string expected = "List<int> testList= new List<int>(){10,20,30};";
+        string expected = "List<int> testList= new List<int>(){15,20,30};";
         Transpiler trans = new Transpiler();
         string actual = trans.TranslateListCreation(tokens);
         Assert.Equal(expected, actual);
     }
 
     [Fact]
-    public void TranslateFucntionWithListDeclaration_Test()
+    public void TranslateFunctionWithListDeclaration_Test()
     {
         List<string> tokens = new List<string>(){
-             "function", "int", "test", "(", ")", "{", "testList", "[", "int", "]", "=", "[", "10",",", "20",",", "30", "]", ";", "}"
+             "function", "int", "test", "(", ")", "{", "testList", "[", "int", "]", "=", "[", "10",",", "20",",", "5", "]", ";", "}"
         };
-        string expected = "public static int test(){List<int> testList= new List<int>(){10,20,30};}";
+        string expected = "public static int test(){List<int> testList= new List<int>(){10,20,5};}";
         Transpiler trans = new Transpiler();
         string actual = trans.TranslateFunction(tokens);
         Assert.Equal(expected, actual);
