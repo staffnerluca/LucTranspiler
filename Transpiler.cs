@@ -303,7 +303,7 @@ public class Transpiler
         }
         foreach (string element in elements)
         {
-            listString += element + ", ";
+            listString += element; //+ ", ";
         }
         // remove last ","
         listString = listString.Substring(0, listString.Count() - 2);
@@ -413,7 +413,7 @@ public class Transpiler
     public string TranslateFunctionHead(List<string> tokens)
     {
         string output = "";
-        output = "public ";
+        output = "public static ";
         int nextTok = 2;
         if (tokens[1].Equals("["))
         {
@@ -429,7 +429,7 @@ public class Transpiler
         {
             output += TranslateToken(tokens[1]); // return value
         }
-        string functionName = tokens[nextTok];
+        string functionName = tokens[nextTok]; /*
         if (functionName.Equals("Main"))
         {
             string[] words = output.Split(" ");
@@ -441,8 +441,9 @@ public class Transpiler
         }
         else
         {
-            output += functionName; 
-        }
+        }*/
+                    output += functionName; 
+
         output += tokens[nextTok + 1];
         bool endOfHead = false;
         int currentPos = nextTok + 2;

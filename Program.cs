@@ -41,7 +41,8 @@ class Program
     public static void WriteCodeToProject(string projectName, string parentDirectory)
     {   
         Console.WriteLine("starting the Transpiler");
-        string json = File.ReadAllText("Tokens.json");
+        string path = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, "Tokens.json");
+        string json = File.ReadAllText(path);
         List<string> data = JsonConvert.DeserializeObject<List<string>>(json);
         Transpiler trans = new Transpiler();
 
