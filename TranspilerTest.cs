@@ -908,14 +908,13 @@ public class TranspilerTests
             "{",
             "resPlus", ":=", "simple_calc", "(", "\u0022+\u0022", ",", "10,", "20", ")", ";",
             "resPlusString", ":=", "to_string", "(", "resPlus",")", ";",
-            "print","(","resPlus",")",";",
+            "print","(","resPlusString",")",";",
+
             "int", "resMinus", "=", "simple_calc","(", "\u0022-\u0022",",", "5,","2", ")", ";",
-            "string", "resMinus", "=", "to_string", "(", "resMinus", ")", ";",
-            "print","(","resMinus",")",";",
-            "print","(","\u0022Done\u0022", ")",";",
+            "print", "(", "\"Done\"", ")", ";",
             "}"
         };
-        string outputExpected = "using System;public class Program{public int simple_calc(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first-second;return result;}else {return 0;}} public static void Main (){var resPlus=simple_calc(\"+\",10,20);var resPlusString=Convert.ToString(resPlus);Console.WriteLine(resPlusString);} }";
+        string outputExpected = "using System;public class Program{public int simple_calc(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first-second;return result;}else {return 0;}} public static void Main (){var resPlus=simple_calc(\"+\",10,20);var resPlusString=Convert.ToString(resPlus);Console.WriteLine(resPlusString);int resMinus=simple_calc(\u0022-\u0022,5,2);Console.WriteLine(\"Done\");} }";
 
         Transpiler trans = new Transpiler();
         string ouptutActual = trans.Translate(tokens);
