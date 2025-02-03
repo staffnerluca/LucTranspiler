@@ -31,7 +31,7 @@ public class TranspilerTests
         List<string> input = new List<string>(){
             "function", "int", "test", "(", ")", "{", "}"
         };
-        string expected = "public int test(){}";
+        string expected = "public static int test(){}";
         Transpiler trans = new Transpiler();
         string output = trans.TranslateFunction(input);
 
@@ -44,7 +44,7 @@ public class TranspilerTests
         List<string> input = new List<string>(){
             "function", "int", "test", "(", ")", "{","int", "test", "=", "10", ";", "}"
         };
-        string expected = "public int test(){int test=10;}";
+        string expected = "public static int test(){int test=10;}";
         Transpiler trans = new Transpiler();
         string output = trans.TranslateFunction(input);
 
@@ -131,7 +131,7 @@ public class TranspilerTests
             "function", "int", "test", "(", ")", "{","test", ":=", "10", ";", "?", "}"
         };
         Transpiler trans = new Transpiler();
-        string expected = "public int test(){try{var test=10;}catch(Exception __lucInternalException__){}";
+        string expected = "public static int test(){try{var test=10;}catch(Exception __lucInternalException__){}";
         string actual = trans.TranslateFunction(tokens);
         Assert.Equal(expected, actual);
     }
@@ -143,7 +143,7 @@ public class TranspilerTests
             "function", "int", "test", "(", ")", "{","test", ":=", "10", ";", "?", "int", "i", "=", "10", ";", "}"
         };
         Transpiler trans = new Transpiler();
-        string expected = "public int test(){try{var test=10;}catch(Exception __lucInternalException__){int i=10;}}";
+        string expected = "public static int test(){try{var test=10;}catch(Exception __lucInternalException__){int i=10;}}";
         string actual = trans.TranslateFunction(tokens);
         Assert.Equal(expected, actual);
     }
@@ -152,9 +152,9 @@ public class TranspilerTests
     public void TranslateListCreationWithoutTypeDeclared_Test()
     {
          List<string> tokens = new List<string>(){
-            "testList", ":=", "[", "10", "20", "30", "]", ";"
+            "testList", ":=", "[", "10", ",", "20", ",", "30", "]", ";"
         };
-        string expected = "List<int> testList= new List<int>(){10, 20, 30};";
+        string expected = "List<int> testList= new List<int>(){10,20,30};";
         Transpiler trans = new Transpiler();
         string actual = trans.TranslateListCreation(tokens);
         Assert.Equal(expected, actual);
@@ -178,7 +178,7 @@ public class TranspilerTests
         List<string> tokens = new List<string>(){
              "function", "int", "test", "(", ")", "{", "testList", "[", "int", "]", "=", "[", "10", "20", "30", "]", ";", "}"
         };
-        string expected = "public int test(){List<int> testList= new List<int>(){10, 20, 30};}";
+        string expected = "public static int test(){List<int> testList= new List<int>(){10, 20, 30};}";
         Transpiler trans = new Transpiler();
         string actual = trans.TranslateFunction(tokens);
         Assert.True(actual == expected, actual);
@@ -268,7 +268,7 @@ public class TranspilerTests
             "r", "10", ";",
             "}"
         };
-        string outputExpected = "public int testFunc(string word){List<int> testList= new List<int>(){10, 20, 30};foreach(var __lucIntern__ in testList){Console.WriteLine('Hello World');}return 10;}";
+        string outputExpected = "public static int testFunc(string word){List<int> testList= new List<int>(){10, 20, 30};foreach(var __lucIntern__ in testList){Console.WriteLine('Hello World');}return 10;}";
 
         Transpiler tok = new Transpiler();
         string outputActual = tok.TranslateFunction(tokens);
@@ -283,7 +283,7 @@ public class TranspilerTests
             "function", "[", "int", "]", "bubble_sort", "(", "[", "int", "]", "to_sort", ")"
         };
 
-        string outputExpected = "public List<int> bubble_sort(List<int> to_sort)";
+        string outputExpected = "public static List<int> bubble_sort(List<int> to_sort)";
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunctionHead(tokens);
 
@@ -336,7 +336,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){for ( int j = 0 ; j <= to_sort.Count()-1 ; j++){if(to_sort[j]>to_sort[j+1]){int temp=to_sort[j];to_sort[j]=to_sort[j+1];to_sort[j+1]=temp;}}}}";
+        string outputExpected = "public static List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){for ( int j = 0 ; j <= to_sort.Count()-1 ; j++){if(to_sort[j]>to_sort[j+1]){int temp=to_sort[j];to_sort[j]=to_sort[j+1];to_sort[j+1]=temp;}}}}";
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
 
@@ -391,7 +391,7 @@ public class TranspilerTests
             "function", "test_func", "(", ")", "{", "print", "(", "'Hello World'", ")", ";", "}"
         };
 
-        string outputExpected = "public void test_func(){Console.WriteLine('Hello World');}";
+        string outputExpected = "public static void test_func(){Console.WriteLine('Hello World');}";
 
         Transpiler trans = new Transpiler();
         string ouptutActual = trans.TranslateFunction(tokens);
@@ -406,7 +406,7 @@ public class TranspilerTests
             "function", "test_func", "(", ")", "{", "ls", "[", "10", "]", ";", "}"
         };
 
-        string outputExpected = "public void test_func(){ls[10];}";
+        string outputExpected = "public static void test_func(){ls[10];}";
 
         Transpiler trans = new Transpiler();
         string ouptutActual = trans.TranslateFunction(tokens);
@@ -421,7 +421,7 @@ public class TranspilerTests
             "function", "test_func", "(", ")", "{", "if", "(", "ls", "[", "5", "]", ")", "{", "}", "}"
         };
 
-        string outputExpected = "public void test_func(){if(ls[5]){}}";
+        string outputExpected = "public static void test_func(){if(ls[5]){}}";
 
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
@@ -436,7 +436,7 @@ public class TranspilerTests
             "function", "test_func", "(", ")", "{", "int", "test", "=", "ls", "[", "5", "]", "}"
         };
 
-        string outputExpected = "public void test_func(){int test=ls[5]}";
+        string outputExpected = "public static void test_func(){int test=ls[5]}";
 
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
@@ -459,7 +459,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public int test_func(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first+second;return result;}else {return 0}}";
+        string outputExpected = "public static int test_func(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first+second;return result;}else {return 0}}";
 
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
@@ -478,7 +478,7 @@ public class TranspilerTests
             "}", "}"
         };
 
-        string outputExpected = "public void my_func(){bool notFound=true;while(notFound){Console.WriteLine('hi');}}";
+        string outputExpected = "public static void my_func(){bool notFound=true;while(notFound){Console.WriteLine('hi');}}";
 
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
@@ -503,7 +503,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public void test_func(){bool test=false;try{Console.WriteLine('Hello World');test=true;}catch(Exception __lucInternalException__){Console.WriteLine('Error');test=false;}}";
+        string outputExpected = "public static void test_func(){bool test=false;try{Console.WriteLine('Hello World');test=true;}catch(Exception __lucInternalException__){Console.WriteLine('Error');test=false;}}";
 
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
@@ -648,7 +648,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "using System;public class Program{public List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){for ( int j = 0 ; j <= to_sort.Count()-1 ; j++){if(to_sort[j]>to_sort[j+1]){int temp=to_sort[j];to_sort[j]=to_sort[j+1];to_sort[j+1]=temp;}}}} public int test_func(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first+second;return result;}else {return 0}} }";
+        string outputExpected = "using System;public class Program{public static List<int> bubble_sort(List<int> to_sort){for ( int i = 1 ; i <= to_sort.Count()-1 ; i++){for ( int j = 0 ; j <= to_sort.Count()-1 ; j++){if(to_sort[j]>to_sort[j+1]){int temp=to_sort[j];to_sort[j]=to_sort[j+1];to_sort[j+1]=temp;}}}} public int test_func(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first+second;return result;}else {return 0}} }";
         
         Transpiler trans = new Transpiler();
         string outputActual = trans.Translate(tokens);
@@ -710,7 +710,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public void funci(string first){string second=\"test\";if(String.Equals(first, second)){}}";
+        string outputExpected = "public static void funci(string first){string second=\"test\";if(String.Equals(first, second)){}}";
 
         Transpiler trans = new Transpiler();
         string ouptutActual = trans.TranslateFunction(tokens);
@@ -727,7 +727,7 @@ public class TranspilerTests
             "}",
         };
 
-        string outputExpected = "public string testStringDec(){var t=\"my way\";}";
+        string outputExpected = "public static string testStringDec(){var t=\"my way\";}";
 
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
@@ -744,7 +744,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public int testIntDec(){int i=12;}";
+        string outputExpected = "public static int testIntDec(){int i=12;}";
 
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
@@ -798,7 +798,7 @@ public class TranspilerTests
             "function", "test_func", "(", "string", "first", ",", "string", "second", ")", "{",
         };
 
-        string outputExpected = "public void test_func(string first,string second){";
+        string outputExpected = "public static void test_func(string first,string second){";
 
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
@@ -815,7 +815,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public static void Main (){Console.WriteLine(\"Hello World\");}";
+        string outputExpected = "public static void Main(){Console.WriteLine(\"Hello World\");}";
 
         Transpiler trans = new Transpiler();
         string ouptutActual = trans.TranslateFunction(tokens);
@@ -832,7 +832,7 @@ public class TranspilerTests
             "}"
         };
         
-        string outputExpected = "public void a_func_with_to_string(){string test=Convert.ToString(12);}";
+        string outputExpected = "public static void a_func_with_to_string(){string test=Convert.ToString(12);}";
 
         Transpiler trans = new Transpiler();
         string ouptutActual = trans.TranslateFunction(tokens);
@@ -849,7 +849,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public void func(){Console.WriteLine(Convert.ToString(12));}";
+        string outputExpected = "public static void func(){Console.WriteLine(Convert.ToString(12));}";
 
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
@@ -866,7 +866,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public void test(){Console.WriteLine(Convert.ToString(12));}";
+        string outputExpected = "public static void test(){Console.WriteLine(Convert.ToString(12));}";
 
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
@@ -914,7 +914,7 @@ public class TranspilerTests
             "print", "(", "\"Done\"", ")", ";",
             "}"
         };
-        string outputExpected = "using System;public class Program{public int simple_calc(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first-second;return result;}else {return 0;}} public static void Main (){var resPlus=simple_calc(\"+\",10,20);var resPlusString=Convert.ToString(resPlus);Console.WriteLine(resPlusString);int resMinus=simple_calc(\u0022-\u0022,5,2);Console.WriteLine(\"Done\");} }";
+        string outputExpected = "using System;public class Program{public static int simple_calc(string sign,int first,int second){if(String.Equals(sign, \"+\")){return first+second;}else if(String.Equals(sign, \"-\")){int result=first-second;return result;}else {return 0;}} public static void Main(){var resPlus=simple_calc(\"+\",10,20);var resPlusString=Convert.ToString(resPlus);Console.WriteLine(resPlusString);int resMinus=simple_calc(\u0022-\u0022,5,2);Console.WriteLine(\"Done\");} }";
 
         Transpiler trans = new Transpiler();
         string ouptutActual = trans.Translate(tokens);
@@ -947,7 +947,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public void funi(){Console.WriteLine(resPlus);var resMinus=simple_calc(\"-\",5,2);}";
+        string outputExpected = "public static void funi(){Console.WriteLine(resPlus);var resMinus=simple_calc(\"-\",5,2);}";
 
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
@@ -980,7 +980,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public void test(string hello){Console.WriteLine(Convert.ToString(hello));}";
+        string outputExpected = "public static void test(string hello){Console.WriteLine(Convert.ToString(hello));}";
 
         Transpiler trans = new Transpiler();
         string ouptutActual = trans.TranslateFunction(tokens);
@@ -997,7 +997,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public void test(string hello){Convert.ToString(hello);}";
+        string outputExpected = "public static void test(string hello){Convert.ToString(hello);}";
 
         Transpiler trans = new Transpiler();
         string ouptutActual = trans.TranslateFunction(tokens);
@@ -1014,7 +1014,7 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public void test(){var resPlusString=Convert.ToString(resPlus);}";
+        string outputExpected = "public static void test(){var resPlusString=Convert.ToString(resPlus);}";
 
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
@@ -1031,12 +1031,29 @@ public class TranspilerTests
             "}"
         };
 
-        string outputExpected = "public void test(){Console.WriteLine(Convert.ToString(inti));}";
+        string outputExpected = "public static void test(){Console.WriteLine(Convert.ToString(inti));}";
 
         Transpiler trans = new Transpiler();
         string ouptutActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, ouptutActual);
+    }
+
+    [Fact]
+    public void TranslateFunctonWithListCreation()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "Main", "(", ")", "{",
+            "nums", "[", "int", "]", "=", "[", "10", ",", "40", ",", "5", ",", "20", "]", ";",
+            "}"
+        };
+
+        string outputExpected = "public static void Main(){List<int> nums= new List<int>(){10,40,5,20};}";
+
+        Transpiler trans = new Transpiler();
+        string outputActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
     }
 
     /* Delete if not fixed

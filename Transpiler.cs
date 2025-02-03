@@ -306,7 +306,7 @@ public class Transpiler
             listString += element; //+ ", ";
         }
         // remove last ","
-        listString = listString.Substring(0, listString.Count() - 2);
+        listString = listString.Substring(0, listString.Count() - 1);
         listString += "};";
         return listString;
     }
