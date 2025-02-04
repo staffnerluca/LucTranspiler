@@ -194,7 +194,6 @@ public class TranspilerTests
         string actual = trans.TranslateFunction(tokens);
         Assert.Equal(expected, actual);
     }
-    
 
     [Fact]
     public void ListCreationAndFunctionCallCallAfter_Test()
@@ -202,19 +201,19 @@ public class TranspilerTests
         List<string> tokens = new List<string>(){
             "function","Main","(",")",
             "{",
-                "print", "(", "test", ")", ";",
+                "print", "(", "\"test\"", ")", ";",
                 "ls","[","int","]","=","[","10", ",","20",",","30","]",";",
                 "print","(","\u0022Done\u0022",")",";",
             "}"
         };
 
-        string outputExpected = "public static void Main(){List<int> ls= new List<int>(){10,20,30};}";
+        string outputExpected = "public static void Main(){Console.WriteLine(\"test\");List<int> ls= new List<int>(){10,20,30};Console.WriteLine(\"Done\");}";
         Transpiler trans = new Transpiler();
         string outputActual = trans.TranslateFunction(tokens);
 
         Assert.Equal(outputExpected, outputActual);
     }
-
+    
     [Fact]
     public void GetStartAndEndOfLine_Test()
     {

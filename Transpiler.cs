@@ -311,24 +311,13 @@ public class Transpiler
             datatype = tokens[2];
         }
         listString += datatype + "> " + listName + "= new List<" + datatype + ">(){";
-        List<string> elements = new List<string> { };
-
-        // TODO FIX THISSSSSSS!!!!!!!!!!
-        for (int i = tokens.Count - 2; i > 0; i--)
+        for(int i = posOfEq + 2; i < tokens.Count() - 1; i++)
         {
-            if (tokens[i].Equals("[") || tokens[i].Equals("]") || tokens[i].Equals(";"))
+            if(!tokens[i].Equals("]") && !tokens[i].Equals(";"))
             {
-                break;
+                listString += tokens[i];
             }
-            elements.Insert(0, tokens[i]);
         }
-        foreach (string element in elements)
-        {
-            listString += element; //+ ", ";
-        }
-        Console.WriteLine("END OF ELEMENTS" + listString);
-        // remove last ","
-        //listString = listString.Substring(0, listString.Count() - 1);
         listString += "};";
         return listString;
     }
@@ -606,13 +595,10 @@ public class Transpiler
                     if(datatypes.Contains(functionTokens[i+1]))
                     {
                         int lineEnderIndex = functionTokens.IndexOf(";", i);
-                        List<string> tokensForListCreation = functionTokens.GetRange(i-1, lineEnderIndex);
-                        Console.WriteLine("#####my_test"); 
-                        Console.WriteLine(func);
-                        foreach(string t in tokensForListCreation){Console.WriteLine(t);}
+                        List<string> tokensForListCreation = functionTokens.GetRange(i-1, lineEnderIndex - i + 1);
                         func = removeLastWordFromString(func);
                         func += TranslateListCreation(tokensForListCreation);
-                        Console.WriteLine(func);
+                        i = lineEnderIndex;
                     }
                     // case list access
                     else
@@ -701,7 +687,6 @@ public class Transpiler
             {
                 func += token;
             }
-            Console.WriteLine(func);
         }
         return func;
     }
@@ -925,9 +910,6 @@ public class Transpiler
                     int functionEndIndex = tokens.IndexOf(")", i);
                     List<string> functionToks = tokens.GetRange(i, functionEndIndex - i);
                     translation += TranslateCallOfInherentFunction(functionToks);
-                    //translation = translation.Remove(translation.Length -1);
-                    Console.WriteLine(token);
-                    //TODO maybe change
                     i += functionEndIndex -1;
                 }
                 else
