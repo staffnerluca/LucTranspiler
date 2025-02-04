@@ -1207,6 +1207,22 @@ public class TranspilerTests
         Assert.Equal(outputExpected, ouptutActual);
     }
 
+    [Fact]
+    public void FunctionWithoutArguments_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "Main", "(", ")", "{",
+            "read", "(", ")", ";",
+            "}"
+        };
+
+        string outputExpected = "public static void Main(){Console.ReadLine();}";
+        Transpiler trans = new Transpiler();
+        string ouptutActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    }
+
     /* Delete if not fixed
     [Fact]
     public void TranslateFunctonWithStringComp_Test()

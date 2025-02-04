@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 using System.Security.Principal;
 using System.Text.Json;
 using Xunit.Sdk;
@@ -398,7 +399,10 @@ public class Transpiler
                     output += values[0] + "(";
                     if(i == indixesOfInherentFunctions.Max())
                     {
-                        output += tokens[i+2];
+                        if(i + 2 < tokens.Count())
+                        {
+                            output += tokens[i+2];
+                        }
                     }
                 }
 
