@@ -1113,6 +1113,36 @@ public class TranspilerTests
         Assert.Equal(outputExpected, ouptutActual);
     }
 
+    [Fact]
+    public void InherentFunctionWithMultipleArguments_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "add_to_list", "(", "list", ",", "10",")", ";"
+        };
+
+        string outputExpected = "list.Add(10)";
+        Transpiler trans = new Transpiler();
+        string outputActual = trans.TranslateCallOfInherentFunction(tokens);
+
+        Assert.Equal(outputExpected, outputActual);
+    }
+
+    [Fact]
+    public void TranslateWithInherentFunctionThatAddsAnImport_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "Main", "(", ")", "{",
+            "read_file", "(", "\"myfilePath\"", ")", ";",
+            "}"
+        };
+        string outputExpected = "using System;using System.IO;public class Program{public static void Main(){File.ReadAllText(\"myfilePath\");} }";
+
+        Transpiler trans = new Transpiler();
+        string ouptutActual = trans.Translate(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    }
+
     /* Delete if not fixed
     [Fact]
     public void TranslateFunctonWithStringComp_Test()

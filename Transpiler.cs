@@ -401,6 +401,40 @@ public class Transpiler
                         output += tokens[i+2];
                     }
                 }
+
+                // add to import to imports
+                List<string> importsList = imports.Split(';').ToList();
+                string currentImport = values[2];
+                bool isInImports = false;
+                foreach(string imp in importsList)
+                {
+                    if(imp.Equals(currentImport))
+                    {
+                        isInImports = true;
+                    }
+                }
+                if(!isInImports)
+                {
+                    imports += currentImport + ";";
+                }
+                Console.WriteLine("##imports##");
+                Console.WriteLine(imports);
+
+                bool parametersLeft = false;
+
+                if(tokens.Count() > i+3)
+                {
+                    parametersLeft = tokens[i+3].Equals(",");
+                }
+                int currentParameterIndex = i + 4;
+                while(parametersLeft)
+                {
+                    output += tokens[currentParameterIndex];
+                    if(!tokens[currentParameterIndex].Equals(",") || !tokens[currentParameterIndex+1].Equals(","))
+                    {
+                        parametersLeft = false;
+                    }
+                }
                 // TODO: add handling multiple parameters
             }
             catch(KeyNotFoundException ex)
@@ -960,7 +994,7 @@ public class Transpiler
     public string Translate(List<string> tokens)
     {
         List<int> functionStarts = GetFunctionStarts(tokens);
-        string code = imports + "public class Program{";
+        string code = "public class Program{";
         for (int i = 0; i < functionStarts.Count(); i++)
         {
             int start = functionStarts[i];
@@ -972,6 +1006,7 @@ public class Transpiler
 
             code += TranslateFunction(tokens.GetRange(start, end - start - 1)) + " ";
         }
+        code = imports + code;
         code += "}";
         return code;
     }
