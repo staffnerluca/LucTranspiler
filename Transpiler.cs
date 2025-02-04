@@ -535,7 +535,6 @@ public class Transpiler
             if (FunctionMapping.DirectMapping.Keys.Contains(currentTok))
             {
                 int functionEndIndex = functionTokens.IndexOf(")", i);
-                // TODO: translate a function that is given as an agrumgent to a function
                 List<string> functionRangeTokens = functionTokens.GetRange(i, functionEndIndex - i);
                 func += TranslateCallOfInherentFunction(functionRangeTokens);
                 int numFuncs = 0;
@@ -721,6 +720,7 @@ public class Transpiler
             {
                 func += token;
             }
+            Console.WriteLine(func);
         }
         return func;
     }
@@ -817,6 +817,13 @@ public class Transpiler
         bool isFullForeach = forHead.Contains("in");
         bool simpleFor = forHead.Count() == 6 || forHead.Count() == 5;
 
+        if(forHead.Contains("["))
+        {
+            Console.WriteLine("huray a [ in forHead");
+            simpleFor = forHead.Count() == 9 || forHead.Count() == 8;
+            Console.WriteLine(simpleFor.ToString());
+            foreach(string tok in forHead){Console.WriteLine(tok);}
+        }
         // example input: for(list)
         if (isSimpleForeach)
         {
@@ -851,8 +858,13 @@ public class Transpiler
         {
             output += "for(";
             string variable = forHead[2];
+
             string compOperator = forHead[3];
             string value = forHead[4];
+            if(forHead[5].Equals("["))
+            {
+                value += forHead[5] + forHead[6] + forHead[7];
+            }
             if (comparisonOperators.Contains(forHead[2]))
             {
                 compOperator = forHead[2];
@@ -868,7 +880,7 @@ public class Transpiler
                 }
                 variable = new string(result);
             }
-            output += "int " + variable + "=0;" + variable + compOperator + value + ";" + "i++" + ")";
+            output += "int " + variable + "=0;" + variable + compOperator + value + ";" + variable + "++" + ")";
         }
         else
         {

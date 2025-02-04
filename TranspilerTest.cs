@@ -1143,6 +1143,70 @@ public class TranspilerTests
         Assert.Equal(outputExpected, ouptutActual);
     }
 
+    [Fact]
+    public void TranslatingLengthOfList_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "test", "(", ")", "{",
+            "int", "m", "=", "max_of_list", "(", "to_sort", ")", ";",
+            "}"
+        };
+
+        string outputExpected = "public static void test(){int m=to_sort.Max();}";
+        Transpiler trans = new Transpiler();
+        string ouptutActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    }
+
+    [Fact]
+    public void TranslateCountingSort_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function","Main","(",")","{",
+                "to_sort","[","int","]","=","[","230,","10,","40","]",";",
+                "sorted","[","int","]","=","[","]",";",
+                "int", "m", "=", "max_of_list","(","to_sort",")", "+", "1", ";",
+                "countingList","[","int","]","=","[","]",";", 
+                "for","i","\u003C","m","{",
+                "add_to_list","(","countingList", ",","0",")",";",
+                "}",
+                "for", "int", "i","in","to_sort","{",
+                "countingList","[","i","]","=", "countingList", "[", "i", "]", "+", "1",";",
+                "}",
+                "for","i","\u003C","m","{",
+                "int", "currentCount", "=", "countingList", "[", "i", "]", ";",
+                "for","j","\u003C","currentCount","{",
+                "add_to_list","(","sorted", ",","i",")",";",
+                "}",
+                "}",
+                "for","int", "i","in","sorted","{",
+                "print","(","to_string","(","i",")",")",";",
+                "}",
+            "}"
+        };
+        
+        string outputExpected = "using System;using System.Linq;using System.Collections.Generic;public class Program{public static void Main(){List<int> to_sort= new List<int>(){230,10,40};List<int> sorted= new List<int>(){};int m=to_sort.Max()+1;List<int> countingList= new List<int>(){};for(int i=0;i<m;i++){countingList.Add(0);}foreach(int i in to_sort ){countingList[i]=countingList[i]+1;}for(int i=0;i<m;i++){int currentCount=countingList[i];for(int j=0;j<currentCount;j++){sorted.Add(i);}}foreach(int i in sorted ){Console.WriteLine(Convert.ToString(i));}} }";
+
+        Transpiler trans = new Transpiler();
+        string ouptutActual = trans.Translate(tokens);
+        Assert.Equal(outputExpected, ouptutActual);
+    }
+
+    [Fact]
+    public void TranslateForWithAccessToListElement()
+    {
+        List<string> tokens = new List<string>(){
+            "for","i","\u003C","countingList","[","i","]"
+        };
+
+        string outputExpected = "for(int i=0;i<countingList[i];i++)";
+        Transpiler trans = new Transpiler();
+        string ouptutActual = trans.TranslateForHead(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    }
+
     /* Delete if not fixed
     [Fact]
     public void TranslateFunctonWithStringComp_Test()
