@@ -1223,6 +1223,38 @@ public class TranspilerTests
         Assert.Equal(outputExpected, ouptutActual);
     }
 
+    [Fact]
+    public void IfWithAnd_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "Main", "(", ")", "{",
+            "if", "test", "and", "test2", "{", "}", "}"
+        };
+
+        string outputExpected = "public static void Main(){if(test && test2){}}";
+        Transpiler trans = new Transpiler();
+        string ouptutActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    }
+
+        [Fact]
+    public void TranslateFunctionWithNot_Test()
+    {
+        List<string> tokens = new List<string>(){
+            "function", "Main", "(", ")", "{",
+            "if", "not", "test", "{", "}",
+            "bool", "t", "=", "not", "me", ";",
+            "if", "one", "not", "two", "{", "}",
+            "}"
+        };
+
+        string outputExpected = "public static void Main(){if(!test){}bool t=!me;if(one!=two){}}";
+        Transpiler trans = new Transpiler();
+        string ouptutActual = trans.TranslateFunction(tokens);
+
+        Assert.Equal(outputExpected, ouptutActual);
+    }
     /* Delete if not fixed
     [Fact]
     public void TranslateFunctonWithStringComp_Test()

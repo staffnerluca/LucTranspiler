@@ -372,8 +372,6 @@ public class Transpiler
         return output;
     }
 
-    // Tradeoff: Is not working if a function takes multiple functions as input
-    // TODO: translate functions with multiple parameters
     public string TranslateCallOfInherentFunction(List<string> tokens)
     {
         string output = "";
@@ -421,8 +419,6 @@ public class Transpiler
                 {
                     imports += currentImport + ";";
                 }
-                Console.WriteLine("##imports##");
-                Console.WriteLine(imports);
 
                 bool parametersLeft = false;
 
@@ -439,7 +435,6 @@ public class Transpiler
                         parametersLeft = false;
                     }
                 }
-                // TODO: add handling multiple parameters
             }
             catch(KeyNotFoundException ex)
             {
@@ -478,20 +473,8 @@ public class Transpiler
         {
             output += TranslateToken(tokens[1]); // return value
         }
-        string functionName = tokens[nextTok]; /*
-        if (functionName.Equals("Main"))
-        {
-            string[] words = output.Split(" ");
-            string o = words[0] + " " + "static ";
-            string result = o;
-            result += string.Join(" ", words, 1, words.Length - 1);
-            output = result;
-            output += "Main ";
-        }
-        else
-        {
-        }*/
-                    output += functionName; 
+        string functionName = tokens[nextTok];
+        output += functionName; 
 
         output += tokens[nextTok + 1];
         bool endOfHead = false;
@@ -559,7 +542,6 @@ public class Transpiler
 
             if (token.Equals("__complex__"))
             {
-                // TODO find out why this is not handling the if case
                 if (currentTok.Equals("while") || currentTok.Equals("if"))
                 {
                     func += currentTok;
@@ -581,7 +563,18 @@ public class Transpiler
                         functionTokens.Insert(positionForClosingBracket, ")");
                     }
                 }
-                //if(currentTok.Equals("if") || currentTok.Equals("if")){Console.WriteLine("this is while" + currentTok);}
+                if(currentTok.Equals("not"))
+                {
+                    char previousToken = func[func.Length - 1];
+                    if(previousToken.Equals('(') || previousToken.Equals('='))
+                    {
+                        func += "!";
+                    }
+                    else
+                    {
+                        func += "!=";
+                    }
+                }
                 if (currentTok.Equals("?"))
                 {
                     if (functionTokens[i - 1].Equals("}"))
@@ -610,7 +603,6 @@ public class Transpiler
                         func += "}catch(Exception __lucInternalException__){";
                         simpleTryCatch = true;
                     }
-                    //TODO: handle mutli line try catch
                 }
 
                 else if (functionTokens[i].Equals(":="))
@@ -622,7 +614,6 @@ public class Transpiler
                     functionTokens.RemoveRange(i - 1, indexOfClosestSemicolon-i-1);
                     
                     // The number of tokens was reduced by a minimum of two and so it needs to decrease by 1
-                    //TODO: Account for more complex variable creations
                     i -= 1;
                 }
                 // example list creation: my_list := [1, 2, 4] or my_list[int] = [1, 2, 4]
@@ -656,12 +647,11 @@ public class Transpiler
                         secondPos += 1;
                     }
 
-                    // TODO translate comparision of longer expressions
                     if (isStringComparision(functionTokens[firstPos], functionTokens[secondPos]))
                     {
                         func = removeLastExpressionFromString(func);
                         func += "String.Equals(" + functionTokens[firstPos] + ", " + functionTokens[secondPos] + ")";
-                        // TODO: remove last token from string
+
                         functionTokens.RemoveAt(i + 1);
                     }
                     else
@@ -691,7 +681,6 @@ public class Transpiler
             }
             else if (currentTok.Equals("if"))
             {
-                // TODO: Handle more complex cases
                 func += token;
                 if (!functionTokens[i + 1].Equals("("))
                 {
@@ -724,7 +713,6 @@ public class Transpiler
             {
                 func += token;
             }
-            Console.WriteLine(func);
         }
         return func;
     }
@@ -789,11 +777,15 @@ public class Transpiler
             {"return", "return "},
             {"=", "="},
             {"else", "else "},
+            {"and", " && "},
+            {"or", " || "},
+            {"is", "=="},
+
         };
 
         List<string> complexKeywords = new List<string>{
             //"if", 
-            "?", "while", ":=", "[", "for", "==" //"="
+            "?", "while", ":=", "[", "for", "==", "not"
         };
         if (LucToCSharpToken.Keys.Contains(tok))
         {
@@ -823,10 +815,7 @@ public class Transpiler
 
         if(forHead.Contains("["))
         {
-            Console.WriteLine("huray a [ in forHead");
             simpleFor = forHead.Count() == 9 || forHead.Count() == 8;
-            Console.WriteLine(simpleFor.ToString());
-            foreach(string tok in forHead){Console.WriteLine(tok);}
         }
         // example input: for(list)
         if (isSimpleForeach)
